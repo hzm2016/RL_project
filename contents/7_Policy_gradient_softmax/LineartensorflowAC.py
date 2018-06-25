@@ -15,29 +15,106 @@ from Tile_coding import Tilecoder
 np.random.seed(2)
 tf.set_random_seed(2)  # reproducible
 
-# Superparameters
-OUTPUT_GRAPH = True
-MAX_EPISODE = 3000
-DISPLAY_REWARD_THRESHOLD = 30001  # renders environment if total episode reward is greater then this threshold
-MAX_EP_STEPS = 1000   # maximum time step in one episode
-RENDER = False  # rendering wastes time
-GAMMA = 0.99     # reward discount in TD error
-LR_A = 0.001    # learning rate for actor
-LR_C = 0.01     # learning rate for critic
+# """Superparameters"""
+# OUTPUT_GRAPH = True
+# MAX_EPISODE = 3000
+# DISPLAY_REWARD_THRESHOLD = 30001  # renders environment if total episode reward is greater then this threshold
+# MAX_EP_STEPS = 1000   # maximum time step in one episode
+# RENDER = False  # rendering wastes time
+# GAMMA = 0.99     # reward discount in TD error
+# LR_A = 0.001    # learning rate for actor
+# LR_C = 0.01     # learning rate for critic
+#
+# """Hyperparameters for tilecoding"""
+# NUMBER_OF_TILINGS = 8
+# TILING_CARDINALITY = 10
+#
+# env = gym.make('CartPole-v0')
+# env._max_episode_steps = 1000
+# env.seed(1)  # reproducible
+# env = env.unwrapped
+#
+# N_F = env.observation_space.shape[0]
+# N_A = env.action_space.n
+#
+# tile = Tilecoder(env, 4, 8)
 
-"""Hyperparameters for tilecoding"""
-NUMBER_OF_TILINGS = 8
-TILING_CARDINALITY = 10
 
-env = gym.make('CartPole-v0')
-env._max_episode_steps = 1000
-env.seed(1)  # reproducible
-env = env.unwrapped
+class DiscreteActorCritic:
 
-N_F = env.observation_space.shape[0]
-N_A = env.action_space.n
+    def __init__(self, sess, n: int, num_actions: int,
+                 gamma,
+                 eta,
+                 alpha_v,
+                 alpha_u,
+                 lamda_v,
+                 lamda_u):
 
-tile = Tilecoder(env, 4, 8)
+        assert (n > 0)
+        assert (num_actions > 0)
+        self.sess = sess
+        self.num_actions = num_actions
+
+        self.reward_bar = 0
+        self.e_v = tf.Variable(tf.zeros([n, 1]), dtype=tf.float32, name='e_v')
+        # self.e_v = np.zeros(n, dtype=float)
+        self.e_u = tf.Variable(tf.zeros([n, num_actions]), dtype=tf.float32, name='e_u')
+        # self.e_u = np.zeros((n, num_actions), dtype=float)
+        self.w_v = tf.Variable(tf.zeros([n, 1]), dtype=tf.float32, name='w_v')
+        # self.w_v = np.zeros(n, dtype=float)
+        self.w_u = tf.Variable(tf.zeros([n, num_actions]), dtype=tf.float32, name='w_u')
+        # self.w_u = np.zeros((n, num_actions), dtype=float)
+        self.last_action = tf.placeholder(tf.int32, None, name='last_action')
+        self.prediction = tf.placeholder(tf.float32, None, name='prediction')
+        self.next_prediction = tf.placeholder(tf.float32, None, name='next_prediction')
+        self.a = tf.placeholder(tf.int32, None, "a")
+        self.s = tf.placeholder(tf.float32, [1, n], name='s')
+        self.s_ = tf.placeholder(tf.float32, [1, n], name='s_')
+        self.r = tf.placeholder(tf.float32, None, name='r')
+        # self.r_bar = tf.placeholder(tf.zeros([1]), None, name='r_bar')
+        self.r_bar = tf.constant(0., dtype=tf.float32, name='r_bar')
+        self.gamma = tf.constant(gamma, dtype=tf.float32, name='gamma')
+        self.eta = tf.constant(eta, dtype=tf.float32, name='eta')
+        self.alpha_v = tf.constant(alpha_v, dtype=tf.float32, name='alpha_v')
+        self.alpha_u = tf.constant(alpha_u, dtype=tf.float32, name='alpha_u')
+        self.lamda_v = tf.constant(lamda_v, dtype=tf.float32, name='lamda_v')
+        self.lamda_u = tf.constant(lamda_u, dtype=tf.float32, name='lamda_u')
+
+        with tf.variable_scope('Prediction'):
+            self.prediction = tf.matmul(self.s, self.w_v)
+
+        with tf.variable_scope('Action'):
+            self.action = tf.matmul(self.s, self.w_u)
+            self.act_prob = tf.nn.softmax(self.action)
+            log_prob = tf.log(self.act_prob[0, self.a])
+
+        with tf.variable_scope('Update_Critic'):
+            delta = self.r - self.r_bar + self.gamma * self.next_prediction - self.prediction
+            self.w_v = tf.assign_add(self.w_v, self.alpha_v * delta * self.e_v)
+            self.w_u = tf.assign_add(self.w_u, self.alpha_u * delta * self.w_u)
+            self.r_bar = tf.add(self.r_bar, self.eta * delta)
+            self.e_v = tf.multiply(self.e_v, tf.multiply(self.lamda_v, self.gamma))
+            print(self.e_v.shape)
+            print(tf.square(delta).shape)
+            gradient = tf.gradients(tf.square(delta), self.w_v)
+            print("gardient", gradient)
+            self.e_v = tf.add(self.e_v, tf.gradients(tf.square(delta), self.w_v))
+            self.e_u *= self.lamda_u * self.gamma
+            self.e_u = tf.add(self.e_u, tf.gradients(log_prob, self.w_u))
+
+    def choose_action(self, s):
+        s = s[np.newaxis, :]
+        probs = self.sess.run(self.acts_prob, {self.s: s})  # get probabilities for all actions
+        return np.random.choice(np.arange(probs.shape[1]), p=probs.ravel())
+
+    def update(self, s, r, s_):
+        s_ = s_[np.newaxis, :]
+        next_p = self.sess.run(self.prediction, {self.s: s_})
+        s = s[np.newaxis, :]
+        a = self.choose_action(s)
+        _, _, _, _, = self.sess.run(self.w_v, self.w_u, self.e_u, self.e_v, {self.s: s, self.r: r, self.a: a,
+                                                                             self.s_: s_, self.next_prediction: next_p})
+
 
 class Actor(object):
     def __init__(self, sess, n_features, n_actions, lr=0.001):
@@ -132,61 +209,62 @@ class Critic(object):
         return td_error, all_q
 
 
-if __name__ == '__main__':
-
-
-    sess = tf.Session()
-    actor = Actor(sess, n_features=tile.numTiles, n_actions=N_A, lr=LR_A)
-    critic = Critic(sess, n_features=tile.numTiles, n_action=N_A, lr=LR_C)     # we need a good teacher, so the teacher should learn faster than the actor
-
-    sess.run(tf.global_variables_initializer())
-
-    if OUTPUT_GRAPH:
-        tf.summary.FileWriter("logs/", sess.graph)
-
-    for i_episode in range(MAX_EPISODE):
-        s = env.reset()
-        initial_s = tile.oneHotFeature(s)
-        t = 0
-        track_r = []
-
-        a, _ = actor.choose_action(initial_s)
-        a_last = a
-
-        while True:
-
-            RENDER = True
-            if RENDER:
-                env.render()
-
-            s_, r, done, info = env.step(a)
-
-            a, ap = actor.choose_action(tile.oneHotFeature(s))
-
-            contact_s = np.append(s, a)
-            contact_s_ = np.append(s, a_last)
-            f = tile.oneHotFeature(contact_s)
-            f_next = tile.oneHotFeature(contact_s_)
-
-            td_error, all_q = critic.learn(f, s, r, f_next, a, int(done), ap)
-            actor.learn(tile.oneHotFeature(s), a, td_error, ap)
-
-            track_r.append(r)
-            a_last = a
-            s = s_
-            t += 1
-
-            if done or t >= MAX_EP_STEPS:
-                ep_rs_sum = sum(track_r)
-
-                if 'running_reward' not in globals():
-                    running_reward = ep_rs_sum
-                else:
-                    running_reward = running_reward * 0.95 + ep_rs_sum * 0.05
-
-                if running_reward > DISPLAY_REWARD_THRESHOLD: RENDER = True  # rendering
-                print("episode:", i_episode, "  reward:", int(running_reward))
-                break
+# if __name__ == '__main__':
+#
+#
+#     sess = tf.Session()
+#
+#     actor = Actor(sess, n_features=tile.numTiles, n_actions=N_A, lr=LR_A)
+#     critic = Critic(sess, n_features=tile.numTiles, n_action=N_A, lr=LR_C)
+#
+#     sess.run(tf.global_variables_initializer())
+#
+#     if OUTPUT_GRAPH:
+#         tf.summary.FileWriter("logs/", sess.graph)
+#
+#     for i_episode in range(MAX_EPISODE):
+#         s = env.reset()
+#         initial_s = tile.oneHotFeature(s)
+#         t = 0
+#         track_r = []
+#
+#         a, _ = actor.choose_action(initial_s)
+#         a_last = a
+#
+#         while True:
+#
+#             RENDER = True
+#             if RENDER:
+#                 env.render()
+#
+#             s_, r, done, info = env.step(a)
+#
+#             a, ap = actor.choose_action(tile.oneHotFeature(s))
+#
+#             contact_s = np.append(s, a)
+#             contact_s_ = np.append(s, a_last)
+#             f = tile.oneHotFeature(contact_s)
+#             f_next = tile.oneHotFeature(contact_s_)
+#
+#             td_error, all_q = critic.learn(f, s, r, f_next, a, int(done), ap)
+#             actor.learn(tile.oneHotFeature(s), a, td_error, ap)
+#
+#             track_r.append(r)
+#             a_last = a
+#             s = s_
+#             t += 1
+#
+#             if done or t >= MAX_EP_STEPS:
+#                 ep_rs_sum = sum(track_r)
+#
+#                 if 'running_reward' not in globals():
+#                     running_reward = ep_rs_sum
+#                 else:
+#                     running_reward = running_reward * 0.95 + ep_rs_sum * 0.05
+#
+#                 if running_reward > DISPLAY_REWARD_THRESHOLD: RENDER = True  # rendering
+#                 print("episode:", i_episode, "  reward:", int(running_reward))
+#                 break
 
 # class Actor(object):
 #     def __init__(self, sess, n_features, n_actions, lr=0.001):

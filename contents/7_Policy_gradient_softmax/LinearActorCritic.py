@@ -35,6 +35,7 @@ from typing import List, Tuple, Union
 
 import numpy as np
 
+
 __all__ = ['ContinuousActorCritic', 'DiscreteActorCritic']
 
 
@@ -114,11 +115,18 @@ class ContinuousActorCritic:
 
 class DiscreteActorCritic:
 
-    def __init__(self, n: int, num_actions: int, random_generator=np.random):
+    def __init__(self, n: int, num_actions: int,
+                 gamma: float,
+                 eta: float,
+                 alpha_v: float,
+                 alpha_u: float,
+                 lamda_v: float,
+                 lamda_u: float):
+
         assert (n > 0)
         assert (num_actions > 0)
         self.num_actions = num_actions
-        self.random_generator = random_generator
+        self.random_generator = np.random
         self.reward_bar = 0
         self.e_v = np.zeros(n, dtype=float)
         self.e_u = np.zeros((n, num_actions), dtype=float)
@@ -126,6 +134,12 @@ class DiscreteActorCritic:
         self.w_u = np.zeros((n, num_actions), dtype=float)
         self.last_action = 0
         self.last_prediction = 0
+        self.gamma = gamma
+        self.eta = eta
+        self.alpha_v = alpha_v
+        self.alpha_u = alpha_u
+        self.lamda_v = lamda_v
+        self.lamda_u = lamda_u
 
     def softmax(self, x: Union[List[float], np.ndarray]) -> np.ndarray:
         x = np.asarray(x, dtype=float)
@@ -150,30 +164,24 @@ class DiscreteActorCritic:
 
     def step(self,
              reward: float,
-             gamma: float,
-             x: Union[List[float], np.ndarray],
-             eta: float,
-             alpha_v: float,
-             alpha_u: float,
-             lamda_v: float,
-             lamda_u: float) -> Tuple[int, float]:
-        assert (0 <= gamma <= 1)
-        assert (eta > 0)
-        assert (alpha_v > 0)
-        assert (alpha_u > 0)
-        assert (0 <= lamda_v <= 1)
-        assert (0 <= lamda_u <= 1)
+             x: Union[List[float], np.ndarray]) -> Tuple[int, float]:
+        assert (0 <= self.gamma <= 1)
+        assert (self.eta > 0)
+        assert (self.alpha_v > 0)
+        assert (self.alpha_u > 0)
+        assert (0 <= self.lamda_v <= 1)
+        assert (0 <= self.lamda_u <= 1)
         x = np.asarray(x, dtype=float)
         prediction = np.dot(self.w_v, x)
-        delta = reward - self.reward_bar + gamma * prediction - self.last_prediction
-        self.w_v += alpha_v * delta * self.e_v
-        self.w_u += alpha_u * delta * self.e_u
+        delta = reward - self.reward_bar + self.gamma * prediction - self.last_prediction
+        self.w_v += self.alpha_v * delta * self.e_v
+        self.w_u += self.alpha_u * delta * self.e_u
         pi = self.softmax(x)
         action = self.random_generator.choice(self.num_actions, p=pi)
-        self.reward_bar += eta * delta
-        self.e_v *= lamda_v * gamma
+        self.reward_bar += self.eta * delta
+        self.e_v *= self.lamda_v * self.gamma
         self.e_v += x
-        self.e_u *= lamda_u * gamma
+        self.e_u *= self.lamda_u * self.gamma
         self.e_u[:, action] += x
         for other in range(self.num_actions):
             self.e_u[:, other] -= x * pi[other]
