@@ -28,7 +28,7 @@ print(env.observation_space.low)
 
 """"Tile coding"""
 NumOfTilings = 10
-MaxSize = 4096
+MaxSize = 2048
 HashTable = IHT(MaxSize)
 
 """position and velocity needs scaling to satisfy the tile software"""
@@ -50,8 +50,8 @@ def getValueFeature(obv):
 
 sess = tf.Session()
 
-DisAC = DiscreteActorCritic(sess, MaxSize, env.action_space.n, 0.99, 0.01, 0.001, 0.0001, 0.3, 0.3)
-DisAC = DisAllActions(sess, MaxSize, env.action_space.n, 0.99, 0.0, 0.0001, 0.00001, 0., 0.)
+DisAC = DiscreteActorCritic(sess, MaxSize, env.action_space.n, 0.99, 0.0, 0.001, 0.0001, 0.3, 0.3)
+# DisAC = DisAllActions(sess, MaxSize, env.action_space.n, 0.99, 0.0, 0.0001, 0.00001, 0., 0.)
 
 if OUTPUT_GRAPH:
     summary_writer = tf.summary.FileWriter("logs/", sess.graph)
@@ -71,13 +71,15 @@ for i_episode in range(MAX_EPISODE):
 
         a_ = DisAC.choose_action(getValueFeature(s_))
 
-        if done:
-            r = 10
+        # if done:
+        #     r = 10
 
         track_r.append(r)
-        delta, r_bar, e_q, w_q, e_u, w_u = DisAC.update(getValueFeature(s), r, getValueFeature(s_), a, a_)
+
+        delta, e_v = DisAC.update(getValueFeature(s), r, getValueFeature(s_), a)
+        # delta, r_bar, e_q, w_q, e_u, w_u = DisAC.update(getValueFeature(s), r, getValueFeature(s_), a, a_)
         # print('delta:', delta, 'r_bar:', r_bar, 'e_q:', e_q, 'w_q:', w_q, 'e_u:', e_u, 'w_u', w_u)
-        print('delta', delta)
+        # print('e_v', e_v)
 
         s = s_
         t += 1
@@ -88,9 +90,10 @@ for i_episode in range(MAX_EPISODE):
             if 'running_reward' not in globals():
                 running_reward = ep_rs_sum
             else:
-                running_reward = running_reward * 0.95 + ep_rs_sum * 0.05
-            if running_reward > DISPLAY_REWARD_THRESHOLD: RENDER = True  # rendering
+                running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
+            # if running_reward > DISPLAY_REWARD_THRESHOLD: RENDER = True  # rendering
             print("episode:", i_episode, "  reward:", int(running_reward))
+
             # record = summary_pb2.Summary.Value(tag='reward', simple_value=running_reward)
             # record_value = summary_pb2.Summary(value=[record])
             # summary_writer.add_summary(record_value, i_episode)

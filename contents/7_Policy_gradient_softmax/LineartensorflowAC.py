@@ -6,6 +6,7 @@
 # @Software: PyCharm
 # @Github    ： https://github.com/hzm2016
 """
+
 import numpy as np
 import tensorflow as tf
 from tensorflow.core.framework import summary_pb2
@@ -39,6 +40,109 @@ tf.set_random_seed(2)
 #
 # tile = Tilecoder(env, 4, 8)
 
+"""REINFORCE"""
+class PolicyGradient(object):
+
+    def __init__(
+            self,
+            n_actions,
+            n_features,
+            learning_rate=0.01,
+            reward_decay=0.95,
+            output_graph=False,
+    ):
+        self.n_actions = n_actions
+        self.n_features = n_features
+        self.lr = learning_rate
+        self.gamma = reward_decay
+
+        self.ep_obs, self.ep_as, self.ep_rs = [], [], []
+
+        self._build_net()
+
+        self.sess = tf.Session()
+
+        if output_graph:
+            # $ tensorboard --logdir=logs
+            # http://0.0.0.0:6006/
+            # tf.train.SummaryWriter soon be deprecated, use following
+            tf.summary.FileWriter("logs/", self.sess.graph)
+
+        self.sess.run(tf.global_variables_initializer())
+
+    def _build_net(self):
+        with tf.name_scope('inputs'):
+            self.tf_obs = tf.placeholder(tf.float32, [None, self.n_features], name="observations")
+            self.tf_acts = tf.placeholder(tf.int32, [None, ], name="actions_num")
+            self.tf_vt = tf.placeholder(tf.float32, [None, ], name="actions_value")
+        # fc1
+        layer = tf.layers.dense(
+            inputs=self.tf_obs,
+            units=10,
+            activation=tf.nn.tanh,  # tanh activation
+            kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.3),
+            bias_initializer=tf.constant_initializer(0.1),
+            name='fc1'
+        )
+        # fc2
+        all_act = tf.layers.dense(
+            inputs=layer,
+            units=self.n_actions,
+            activation=None,
+            kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.3),
+            bias_initializer=tf.constant_initializer(0.1),
+            name='fc2'
+        )
+
+        self.all_act_prob = tf.nn.softmax(all_act, name='act_prob')  # use softmax to convert to probability
+
+        with tf.name_scope('loss'):
+            # to maximize total reward (log_p * R) is to minimize -(log_p * R), and the tf only have minimize(loss)
+            self.neg_log_prob = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=all_act, labels=self.tf_acts)   # this is negative log of chosen action
+            # or in this way:
+            # neg_log_prob = tf.reduce_sum(-tf.log(self.all_act_prob)*tf.one_hot(self.tf_acts, self.n_actions), axis=1)
+            loss = tf.reduce_mean(self.neg_log_prob * self.tf_vt)  # reward guided loss
+
+        with tf.name_scope('train'):
+            self.train_op = tf.train.AdamOptimizer(self.lr).minimize(loss)
+
+    def choose_action(self, observation):
+        prob_weights = self.sess.run(self.all_act_prob, feed_dict={self.tf_obs: observation[np.newaxis, :]})
+        action = np.random.choice(range(prob_weights.shape[1]), p=prob_weights.ravel())  # select action w.r.t the actions prob
+        return action
+
+    def store_transition(self, s, a, r):
+        self.ep_obs.append(s)
+        self.ep_as.append(a)
+        self.ep_rs.append(r)
+
+    def learn(self):
+        # discount and normalize episode reward
+        discounted_ep_rs_norm = self._discount_and_norm_rewards()
+
+        # train on episode
+        ng, _ = self.sess.run([self.neg_log_prob, self.train_op], feed_dict={
+             self.tf_obs: np.vstack(self.ep_obs),  # shape=[None, n_obs]
+             self.tf_acts: np.array(self.ep_as),  # shape=[None, ]
+             self.tf_vt: discounted_ep_rs_norm,  # shape=[None, ]
+        })
+
+        self.ep_obs, self.ep_as, self.ep_rs = [], [], []    # empty episode data
+        return discounted_ep_rs_norm
+
+    def _discount_and_norm_rewards(self):
+        # discount episode rewards
+        discounted_ep_rs = np.zeros_like(self.ep_rs)
+        running_add = 0
+        for t in reversed(range(0, len(self.ep_rs))):
+            running_add = running_add * self.gamma + self.ep_rs[t]
+            discounted_ep_rs[t] = running_add
+
+        # normalize episode rewards
+        discounted_ep_rs -= np.mean(discounted_ep_rs)
+        discounted_ep_rs /= np.std(discounted_ep_rs)
+        return discounted_ep_rs
+
 
 class DiscreteActorCritic:
 
@@ -53,8 +157,6 @@ class DiscreteActorCritic:
         assert (num_actions > 0)
         self.sess = sess
         self.num_actions = num_actions
-
-        self.last_action = tf.placeholder(tf.int32, None, name='last_action')
         self.prediction = tf.placeholder(tf.float32, [1, 1], name='prediction')
         self.next_prediction = tf.placeholder(tf.float32, [1, 1], name='next_prediction')
         self.a = tf.placeholder(tf.int32, None, "a")
@@ -104,8 +206,10 @@ class DiscreteActorCritic:
         s_ = s_[np.newaxis, :]
         next_p = self.sess.run(self.prediction, {self.s: s_})
         s = s[np.newaxis, :]
-        _, _, _, _, _, _ = self.sess.run([self.delta, self.r_bar, self.e_v, self.w_v, self.e_u, self.w_v], \
+        delta, _, e_v, _, _, _ = self.sess.run([self.delta, self.r_bar, self.e_v, self.w_v, self.e_u, self.w_v], \
                                     {self.s: s, self.r: r, self.a: a, self.s_: s_, self.next_prediction: next_p})
+
+        return delta, e_v
 
 
 class DisAllActions:
@@ -125,7 +229,6 @@ class DisAllActions:
 
         self.prediction = tf.placeholder(tf.float32, [1, num_actions], name='prediction')
         self.next_prediction = tf.placeholder(tf.float32, [1, num_actions], name='next_prediction')
-        self.vector_prediction = tf.placeholder(tf.float32, [1, num_actions], 'vector_prediction')
         self.a = tf.placeholder(tf.int32, None, "a")
         self.a_ = tf.placeholder(tf.int32, None, "a_")
         self.s = tf.placeholder(tf.float32, [1, n], name='s')
@@ -152,7 +255,7 @@ class DisAllActions:
         with tf.variable_scope('Update_Evaluation'):
             self.r_bar = tf.Variable(tf.zeros([1, 1]), dtype=tf.float32, name='r_bar')
             self.delta = self.r - self.r_bar + self.gamma * self.next_prediction[0, self.a_] \
-                         - self.prediction[0, self.a]  # sarsa update q value
+                         - self.prediction[0, self.a]   # sarsa update q value
             self.r_bar_update = tf.assign_add(self.r_bar, self.eta * self.delta)
             gra_v = tf.gradients(tf.reduce_mean(tf.square(self.delta)), self.w_q)
             self.e_q_update = tf.assign_add(self.e_q, self.lamda_v * self.gamma * self.e_q + gra_v[0])  # update trace_v
@@ -186,103 +289,103 @@ class DisAllActions:
         return delta, r_bar, e_q, w_q, e_u, w_u
 
 
-class Actor(object):
-    def __init__(self, sess, n_features, n_actions, lr=0.001):
-        self.sess = sess
-        self.s = tf.placeholder(tf.float32, [1, n_features], "state")
-        self.a = tf.placeholder(tf.int32, None, "act")
-        self.td_error = tf.placeholder(tf.float32, None, "td_error")
-        self.gamma = tf.placeholder(tf.float32, None, "gamma")
-        self.onehot_q = tf.placeholder(tf.float32, [1, n_actions], "onehot_value")
-        self.lr = tf.Variable(tf.constant(lr), dtype=tf.float32, name="leraning_rate")
-
-        with tf.variable_scope('Actor'):
-
-            self.w_actor = tf.Variable(tf.random_uniform([n_features, n_actions]), dtype=tf.float32, name="w_actor")
-
-            self.l1 = tf.matmul(self.s, self.w_actor)
-
-            self.acts_prob = tf.nn.softmax(self.l1)
-            # self.acts_prob = tf.layers.dense(
-            #     inputs=self.l1,
-            #     units=n_actions,    # output units
-            #     activation=tf.nn.softmax,   # get action probabilities
-            #     # kernel_initializer=tf.random_normal_initializer(0., .1),  # weights
-            #     # bias_initializer=tf.constant_initializer(0.1),  # biases
-            #     name='acts_prob'
-            # )
-
-        with tf.variable_scope('gradient'):
-            gra = self.lr * tf.gradients(self.acts_prob, self.w_actor)
-            print(gra[0].shape)
-            self.all_gradient = tf.reduce_sum(gra * self.onehot_q, axis=0)
-            print('a', self.all_gradient.shape)
-
-        with tf.variable_scope('update'):
-            self.update = tf.assign_add(self.w_actor, self.all_gradient)
-
-    def learn(self, s, a, td_error, all_q):
-        s = s[np.newaxis, :]
-        feed_dict = {self.s: s, self.a: a, self.td_error: td_error, self.onehot_q: all_q}
-        _ = self.sess.run([self.update], feed_dict)
-
-    def choose_action(self, s):
-        s = s[np.newaxis, :]
-        probs = self.sess.run(self.acts_prob, {self.s: s})   # get probabilities for all actions
-        a = np.random.choice(np.arange(probs.shape[1]), p=probs.ravel())  # return a int
-        return a, probs.ravel()
-
-
-class Critic(object):
-
-    def __init__(self, sess, n_features, n_action, lr=0.01):
-        self.sess = sess
-
-        self.x = tf.placeholder(tf.float32, [1, n_features], "current_state")
-        self.x_ = tf.placeholder(tf.float32, [1, n_features], "next_state")
-        self.q_next = tf.placeholder(tf.float32, [1, 1], "q_next")
-        self.q = tf.placeholder(tf.float32, [1, 1], "q")
-        self.r = tf.placeholder(tf.float32, None, 'r')
-        self.gamma = tf.placeholder(tf.float32, None, 'gamma')
-        self.a = tf.placeholder(tf.float32, None, "a")
-        self.td_error = tf.placeholder(tf.float32, None, 'td_error')
-        self.all_actions = tf.placeholder(tf.float32, [1, n_action], "all_actions")
-        self.done = tf.placeholder(tf.float32, None, 'done')
-        self.lr = tf.Variable(tf.constant(lr), dtype=tf.float32, name="lr")
-        self.n_action = n_action
-
-        with tf.variable_scope('Critic'):
-
-            self.w_critic = tf.Variable(tf.random_uniform([n_features, 1]), dtype=tf.float32, name= "w_critic")
-            self.q = tf.matmul(self.x, self.w_critic)
-            print('qa', tf.gradients(self.q, self.w_critic))
-            print('q', self.q.shape)
-
-        with tf.variable_scope('gradient'):
-            self.td_error = self.r + GAMMA * self.q_next - self.q
-            print(self.td_error.shape)
-            # gra = self.lr * tf.gradients(self.q, self.w_critic) * self.td_error
-            # self.w_critic += self.lr * self.td_error * self.x
-
-            gra = tf.gradients(tf.reduce_mean(tf.square(self.td_error)), self.w_critic)
-            self.update = tf.assign_add(self.w_critic, gra[0])
-
-            print(self.update.shape)
-
-    def learn(self, s, x, r, s_, a_, done, all_a):
-        s, s_ = s[np.newaxis, :], s_[np.newaxis, :]
-        all_q = np.zeros(self.n_action)
-        for i in range(self.n_action):
-            x_new = tile.oneHotFeature(np.append(x, all_a[i]))
-            x_new = x_new[np.newaxis, :]
-
-            all_q[i] = self.sess.run(self.q, {self.x: x_new, self.a: all_a[i]})[0]
-
-
-        q_ = self.sess.run(self.q, {self.x: s_, self.a: a_, self.done: done})
-        td_error, _ = self.sess.run([self.td_error, self.update],
-                                          {self.x: s, self.q_next: q_, self.done: done, self.r: r})
-        return td_error, all_q
+# class Actor(object):
+#     def __init__(self, sess, n_features, n_actions, lr=0.001):
+#         self.sess = sess
+#         self.s = tf.placeholder(tf.float32, [1, n_features], "state")
+#         self.a = tf.placeholder(tf.int32, None, "act")
+#         self.td_error = tf.placeholder(tf.float32, None, "td_error")
+#         self.gamma = tf.placeholder(tf.float32, None, "gamma")
+#         self.onehot_q = tf.placeholder(tf.float32, [1, n_actions], "onehot_value")
+#         self.lr = tf.Variable(tf.constant(lr), dtype=tf.float32, name="leraning_rate")
+#
+#         with tf.variable_scope('Actor'):
+#
+#             self.w_actor = tf.Variable(tf.random_uniform([n_features, n_actions]), dtype=tf.float32, name="w_actor")
+#
+#             self.l1 = tf.matmul(self.s, self.w_actor)
+#
+#             self.acts_prob = tf.nn.softmax(self.l1)
+#             # self.acts_prob = tf.layers.dense(
+#             #     inputs=self.l1,
+#             #     units=n_actions,    # output units
+#             #     activation=tf.nn.softmax,   # get action probabilities
+#             #     # kernel_initializer=tf.random_normal_initializer(0., .1),  # weights
+#             #     # bias_initializer=tf.constant_initializer(0.1),  # biases
+#             #     name='acts_prob'
+#             # )
+#
+#         with tf.variable_scope('gradient'):
+#             gra = self.lr * tf.gradients(self.acts_prob, self.w_actor)
+#             print(gra[0].shape)
+#             self.all_gradient = tf.reduce_sum(gra * self.onehot_q, axis=0)
+#             print('a', self.all_gradient.shape)
+#
+#         with tf.variable_scope('update'):
+#             self.update = tf.assign_add(self.w_actor, self.all_gradient)
+#
+#     def learn(self, s, a, td_error, all_q):
+#         s = s[np.newaxis, :]
+#         feed_dict = {self.s: s, self.a: a, self.td_error: td_error, self.onehot_q: all_q}
+#         _ = self.sess.run([self.update], feed_dict)
+#
+#     def choose_action(self, s):
+#         s = s[np.newaxis, :]
+#         probs = self.sess.run(self.acts_prob, {self.s: s})   # get probabilities for all actions
+#         a = np.random.choice(np.arange(probs.shape[1]), p=probs.ravel())  # return a int
+#         return a, probs.ravel()
+#
+#
+# class Critic(object):
+#
+#     def __init__(self, sess, n_features, n_action, lr=0.01):
+#         self.sess = sess
+#
+#         self.x = tf.placeholder(tf.float32, [1, n_features], "current_state")
+#         self.x_ = tf.placeholder(tf.float32, [1, n_features], "next_state")
+#         self.q_next = tf.placeholder(tf.float32, [1, 1], "q_next")
+#         self.q = tf.placeholder(tf.float32, [1, 1], "q")
+#         self.r = tf.placeholder(tf.float32, None, 'r')
+#         self.gamma = tf.placeholder(tf.float32, None, 'gamma')
+#         self.a = tf.placeholder(tf.float32, None, "a")
+#         self.td_error = tf.placeholder(tf.float32, None, 'td_error')
+#         self.all_actions = tf.placeholder(tf.float32, [1, n_action], "all_actions")
+#         self.done = tf.placeholder(tf.float32, None, 'done')
+#         self.lr = tf.Variable(tf.constant(lr), dtype=tf.float32, name="lr")
+#         self.n_action = n_action
+#
+#         with tf.variable_scope('Critic'):
+#
+#             self.w_critic = tf.Variable(tf.random_uniform([n_features, 1]), dtype=tf.float32, name= "w_critic")
+#             self.q = tf.matmul(self.x, self.w_critic)
+#             print('qa', tf.gradients(self.q, self.w_critic))
+#             print('q', self.q.shape)
+#
+#         with tf.variable_scope('gradient'):
+#             self.td_error = self.r + GAMMA * self.q_next - self.q
+#             print(self.td_error.shape)
+#             # gra = self.lr * tf.gradients(self.q, self.w_critic) * self.td_error
+#             # self.w_critic += self.lr * self.td_error * self.x
+#
+#             gra = tf.gradients(tf.reduce_mean(tf.square(self.td_error)), self.w_critic)
+#             self.update = tf.assign_add(self.w_critic, gra[0])
+#
+#             print(self.update.shape)
+#
+#     def learn(self, s, x, r, s_, a_, done, all_a):
+#         s, s_ = s[np.newaxis, :], s_[np.newaxis, :]
+#         all_q = np.zeros(self.n_action)
+#         for i in range(self.n_action):
+#             x_new = tile.oneHotFeature(np.append(x, all_a[i]))
+#             x_new = x_new[np.newaxis, :]
+#
+#             all_q[i] = self.sess.run(self.q, {self.x: x_new, self.a: all_a[i]})[0]
+#
+#
+#         q_ = self.sess.run(self.q, {self.x: s_, self.a: a_, self.done: done})
+#         td_error, _ = self.sess.run([self.td_error, self.update],
+#                                           {self.x: s, self.q_next: q_, self.done: done, self.r: r})
+#         return td_error, all_q
 
 
 # if __name__ == '__main__':

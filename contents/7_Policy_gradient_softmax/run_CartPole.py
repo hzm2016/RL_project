@@ -1,3 +1,4 @@
+"""Linear Actor Critic"""
 import gym
 from RL_brain import *
 from Tile_coding import *
@@ -97,73 +98,7 @@ def getValueFeature(obv):
 #
 #         observation = observation_
 
-# sess = tf.Session()
-# type = 'AA'
-#
-# if type == 'AA':
-#     actor = Actor(sess, n_features=N_F, n_actions=N_A, lr=LR_A)
-#     critic = ValueFunction(sess, n_features=N_F, n_actions=N_A, gamma=GAMMA, lr=LR_C)
-# elif type == 'SA':
-#     actor = Actor(sess, n_features=N_F, n_actions=N_A, lr=LR_A)
-#     critic = Critic(sess, n_features=N_F, lr=LR_C)
-#
-# sess.run(tf.global_variables_initializer())
-#
-# if OUTPUT_GRAPH:
-#     summary_writer = tf.summary.FileWriter("logs/"+type, sess.graph)
-#
-# for i_episode in range(MAX_EPISODE):
-#     s = env.reset()
-#     t = 0
-#     track_r = []
-#     a, a_vector = actor.choose_action(s)
-#     # print('a', a, 'aa', a_vector)
-#
-#     while True:
-#
-#         if RENDER:
-#             env.render()
-#
-#         a, a_vector = actor.choose_action(s)
-#         # print('a_vector', a_vector)
-#
-#         s_, r, done, info = env.step(a)
-#
-#         if done:
-#             r = -20
-#
-#         track_r.append(r)
-#
-#         if type == 'AA':
-#             aa_action_td_error = critic.learn(s, r, s_, int(done), a_vector)
-#             # print('aa_q', aa_action_td_error[0])
-#             a, b = actor.aa_learn(s, a, aa_action_td_error)
-#             # print('prob', b)
-#         else:
-#             td_error = critic.learn(s, r, s_, GAMMA)  # gradient = grad[r + gamma * V(s_) - V(s)]
-#             actor.learn(s, a, td_error)  # true_gradient = grad[logPi(s,a) * td_error
-#
-#         s = s_
-#         t += 1
-#
-#         if done or t >= MAX_EP_STEPS:
-#             ep_rs_sum = sum(track_r)
-#
-#             if 'running_reward' not in globals():
-#                 running_reward = ep_rs_sum
-#             else:
-#                 running_reward = running_reward * 0.95 + ep_rs_sum * 0.05
-#
-#             if running_reward > DISPLAY_REWARD_THRESHOLD: RENDER = True  # rendering
-#             print("episode:", i_episode, "  reward:", int(running_reward))
-#             record = summary_pb2.Summary.Value(tag='reward', simple_value=running_reward)
-#             record_value = summary_pb2.Summary(value=[record])
-#             summary_writer.add_summary(record_value, i_episode)
-#             break
-
-
 # LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, 0.99, 0., 0.001, 0.0001, 0.3, 0.3)
-
 
 # for i_espisode in range(3000):
 #
@@ -203,7 +138,6 @@ def getValueFeature(obv):
 #             print("episode:", i_espisode,  "reward:", int(running_reward))
 #
 #             break
-
 
 def play(LinearAC):
 
