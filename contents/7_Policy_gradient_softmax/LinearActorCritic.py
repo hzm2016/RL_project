@@ -166,7 +166,7 @@ class DiscreteActorCritic:
              reward: float,
              x: Union[List[float], np.ndarray]) -> Tuple[int, float]:
         assert (0 <= self.gamma <= 1)
-        assert (self.eta > 0)
+        assert (self.eta >= 0)
         assert (self.alpha_v > 0)
         assert (self.alpha_u > 0)
         assert (0 <= self.lamda_v <= 1)

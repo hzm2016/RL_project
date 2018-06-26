@@ -2,7 +2,7 @@
 """
 # @Time    : 23/06/18 10:41 AM
 # @Author  : ZHIMIN HOU
-# @FileName: Allactions_AC.py
+# @FileName: NonLinearActorCr.py
 # @Software: PyCharm
 # @Github    ： https://github.com/hzm2016
 """
@@ -22,14 +22,14 @@ tf.set_random_seed(2)  # reproducible
 OUTPUT_GRAPH = False
 MAX_EPISODE = 4000
 DISPLAY_REWARD_THRESHOLD = 4001  # renders environment if total episode reward is greater then this threshold
-MAX_EP_STEPS = 1000   # maximum time step in one episode
+MAX_EP_STEPS = 5000   # maximum time step in one episode
 RENDER = False  # rendering wastes time
 GAMMA = 0.99     # reward discount in TD error
 LR_A = 0.001    # learning rate for actor
 LR_C = 0.01     # learning rate for critic
 
-# env = gym.make('MountainCar-v0')
-env = gym.make('CartPole-v0')
+env = gym.make('MountainCar-v0')
+# env = gym.make('CartPole-v0')
 
 env.seed(1)  # reproducible
 env = env.unwrapped
@@ -78,8 +78,7 @@ class Actor(object):
         s = s[np.newaxis, :]
         feed_dict = {self.s: s, self.a: a, self.td_error: td}
         _, exp_v = self.sess.run([self.train_op, self.exp_v], feed_dict)
-        if __debug__:
-            print('policy gradient {}'.format(exp_v)),
+        # if __debug__: print('policy gradient {}'.format(exp_v)),
         return exp_v
 
     def choose_action(self, s):
@@ -129,9 +128,9 @@ class Critic(object):
         s, s_ = s[np.newaxis, :], s_[np.newaxis, :]
 
         v_ = self.sess.run(self.v, {self.s: s_})
-        td_error, _ , loss = self.sess.run([self.td_error, self.train_op, self.loss],
+        td_error, _, loss = self.sess.run([self.td_error, self.train_op, self.loss],
                                           {self.s: s, self.v_: v_, self.r: r})
-        if __debug__:  print('critic loss {0}'.format(loss)),
+        # if __debug__:  print('critic loss {0}'.format(loss)),
         return td_error
 
 
@@ -246,7 +245,7 @@ class CriticAA(object):
 
 
 sess = tf.Session()
-type = 'AA'
+type = 'SIG'
 
 if type == 'AA':
     actor = ActorAA(sess, n_features=N_F, n_actions=N_A, lr=LR_A)
@@ -264,7 +263,6 @@ for i_episode in range(MAX_EPISODE):
     s = env.reset()
     t = 0
     track_r = []
-
     a = actor.choose_action(s)
 
     while True:
@@ -276,11 +274,11 @@ for i_episode in range(MAX_EPISODE):
 
         ap = actor.choose_action(s)
 
-        if done: r = -20
+        # if done: r = -20
 
         track_r.append(r)
 
-        td_error = critic.learn(s, 0.1*r, s_, a, int(done), ap)  # gradient = grad[r + gamma * V(s_) - V(s)]
+        td_error = critic.learn(s, r, s_, a, int(done), ap)  # gradient = grad[r + gamma * V(s_) - V(s)]
         actor.learn(s, a, td_error)     # true_gradient = grad[logPi(s,a) * td_error]
 
         a = ap

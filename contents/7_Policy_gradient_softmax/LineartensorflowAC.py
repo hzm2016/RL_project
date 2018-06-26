@@ -13,9 +13,9 @@ import gym
 from Tile_coding import Tilecoder
 
 np.random.seed(2)
-tf.set_random_seed(2)  # reproducible
+tf.set_random_seed(2)
 
-# """Superparameters"""
+# # """Superparameters"""
 # OUTPUT_GRAPH = True
 # MAX_EPISODE = 3000
 # DISPLAY_REWARD_THRESHOLD = 30001  # renders environment if total episode reward is greater then this threshold
@@ -49,71 +49,141 @@ class DiscreteActorCritic:
                  alpha_u,
                  lamda_v,
                  lamda_u):
-
         assert (n > 0)
         assert (num_actions > 0)
         self.sess = sess
         self.num_actions = num_actions
 
-        self.reward_bar = 0
-        self.e_v = tf.Variable(tf.zeros([n, 1]), dtype=tf.float32, name='e_v')
-        # self.e_v = np.zeros(n, dtype=float)
-        self.e_u = tf.Variable(tf.zeros([n, num_actions]), dtype=tf.float32, name='e_u')
-        # self.e_u = np.zeros((n, num_actions), dtype=float)
-        self.w_v = tf.Variable(tf.zeros([n, 1]), dtype=tf.float32, name='w_v')
-        # self.w_v = np.zeros(n, dtype=float)
-        self.w_u = tf.Variable(tf.zeros([n, num_actions]), dtype=tf.float32, name='w_u')
-        # self.w_u = np.zeros((n, num_actions), dtype=float)
         self.last_action = tf.placeholder(tf.int32, None, name='last_action')
-        self.prediction = tf.placeholder(tf.float32, None, name='prediction')
-        self.next_prediction = tf.placeholder(tf.float32, None, name='next_prediction')
+        self.prediction = tf.placeholder(tf.float32, [1, 1], name='prediction')
+        self.next_prediction = tf.placeholder(tf.float32, [1, 1], name='next_prediction')
         self.a = tf.placeholder(tf.int32, None, "a")
         self.s = tf.placeholder(tf.float32, [1, n], name='s')
         self.s_ = tf.placeholder(tf.float32, [1, n], name='s_')
         self.r = tf.placeholder(tf.float32, None, name='r')
-        # self.r_bar = tf.placeholder(tf.zeros([1]), None, name='r_bar')
-        self.r_bar = tf.constant(0., dtype=tf.float32, name='r_bar')
-        self.gamma = tf.constant(gamma, dtype=tf.float32, name='gamma')
-        self.eta = tf.constant(eta, dtype=tf.float32, name='eta')
-        self.alpha_v = tf.constant(alpha_v, dtype=tf.float32, name='alpha_v')
-        self.alpha_u = tf.constant(alpha_u, dtype=tf.float32, name='alpha_u')
-        self.lamda_v = tf.constant(lamda_v, dtype=tf.float32, name='lamda_v')
-        self.lamda_u = tf.constant(lamda_u, dtype=tf.float32, name='lamda_u')
+        self.gamma = gamma
+        self.eta = eta
+        self.alpha_v = alpha_v
+        self.alpha_u = alpha_u
+        self.lamda_v = lamda_v
+        self.lamda_u = lamda_u
 
         with tf.variable_scope('Prediction'):
+            self.w_v = tf.Variable(tf.zeros([n, 1]), dtype=tf.float32, name='w_v')
+            self.e_v = tf.Variable(tf.zeros([n, 1]), dtype=tf.float32, name='e_v')
             self.prediction = tf.matmul(self.s, self.w_v)
 
         with tf.variable_scope('Action'):
+            self.w_u = tf.Variable(tf.zeros([n, num_actions]), dtype=tf.float32, name='w_u')
+            self.e_u = tf.Variable(tf.zeros([n, num_actions]), dtype=tf.float32, name='e_u')
             self.action = tf.matmul(self.s, self.w_u)
-            self.act_prob = tf.nn.softmax(self.action)
-            log_prob = tf.log(self.act_prob[0, self.a])
+            self.acts_prob = tf.nn.softmax(self.action)
 
         with tf.variable_scope('Update_Critic'):
-            delta = self.r - self.r_bar + self.gamma * self.next_prediction - self.prediction
-            self.w_v = tf.assign_add(self.w_v, self.alpha_v * delta * self.e_v)
-            self.w_u = tf.assign_add(self.w_u, self.alpha_u * delta * self.w_u)
-            self.r_bar = tf.add(self.r_bar, self.eta * delta)
-            self.e_v = tf.multiply(self.e_v, tf.multiply(self.lamda_v, self.gamma))
-            print(self.e_v.shape)
-            print(tf.square(delta).shape)
-            gradient = tf.gradients(tf.square(delta), self.w_v)
-            print("gardient", gradient)
-            self.e_v = tf.add(self.e_v, tf.gradients(tf.square(delta), self.w_v))
-            self.e_u *= self.lamda_u * self.gamma
-            self.e_u = tf.add(self.e_u, tf.gradients(log_prob, self.w_u))
+            self.r_bar = tf.Variable(tf.zeros([1, 1]), dtype=tf.float32, name='r_bar')
+            self.delta = self.r - self.r_bar + self.gamma * self.next_prediction - self.prediction
+            self.r_bar = tf.assign_add(self.r_bar, self.eta * self.delta)
+            gra_v = tf.gradients(tf.reduce_mean(tf.square(self.delta)), self.w_v)
+            self.e_v = self.lamda_v * self.gamma * self.e_v + gra_v[0]  # update trace_v
+            # print(self.w_v)
+            # print(self.alpha_v * delta * self.e_v)
+            self.w_v = tf.assign_add(self.w_v, self.alpha_v * self.delta * self.e_v)  # update w_v
+
+        with tf.variable_scope('Update_Actor'):
+            log_prob = tf.reduce_mean(tf.log(self.acts_prob[0, self.a]))
+            gra_u = tf.gradients(log_prob, self.w_u)
+            self.e_u = self.lamda_u * self.gamma * self.e_u + gra_u[0]  # update trace_u
+            self.w_u = tf.assign_add(self.w_u, self.alpha_u * self.delta * self.e_u)  # update w_u
 
     def choose_action(self, s):
         s = s[np.newaxis, :]
         probs = self.sess.run(self.acts_prob, {self.s: s})  # get probabilities for all actions
         return np.random.choice(np.arange(probs.shape[1]), p=probs.ravel())
 
-    def update(self, s, r, s_):
+    def update(self, s, r, s_, a):
         s_ = s_[np.newaxis, :]
         next_p = self.sess.run(self.prediction, {self.s: s_})
         s = s[np.newaxis, :]
-        a = self.choose_action(s)
-        _, _, _, _, = self.sess.run(self.w_v, self.w_u, self.e_u, self.e_v, {self.s: s, self.r: r, self.a: a,
-                                                                             self.s_: s_, self.next_prediction: next_p})
+        _, _, _, _, _, _ = self.sess.run([self.delta, self.r_bar, self.e_v, self.w_v, self.e_u, self.w_v], \
+                                    {self.s: s, self.r: r, self.a: a, self.s_: s_, self.next_prediction: next_p})
+
+
+class DisAllActions:
+
+    def __init__(self, sess, n: int,  # number of feature
+                 num_actions: int,
+                 gamma,
+                 eta,
+                 alpha_v,
+                 alpha_u,
+                 lamda_v,
+                 lamda_u):
+        assert (n > 0)
+        assert (num_actions > 0)
+        self.sess = sess
+        self.num_actions = num_actions
+
+        self.prediction = tf.placeholder(tf.float32, [1, num_actions], name='prediction')
+        self.next_prediction = tf.placeholder(tf.float32, [1, num_actions], name='next_prediction')
+        self.vector_prediction = tf.placeholder(tf.float32, [1, num_actions], 'vector_prediction')
+        self.a = tf.placeholder(tf.int32, None, "a")
+        self.a_ = tf.placeholder(tf.int32, None, "a_")
+        self.s = tf.placeholder(tf.float32, [1, n], name='s')
+        self.s_ = tf.placeholder(tf.float32, [1, n], name='s_')
+        self.r = tf.placeholder(tf.float32, None, name='r')
+        self.gamma = gamma
+        self.eta = eta
+        self.alpha_v = alpha_v
+        self.alpha_u = alpha_u
+        self.lamda_v = lamda_v
+        self.lamda_u = lamda_u
+
+        with tf.variable_scope('Evaluation'):
+            self.w_q = tf.Variable(tf.zeros([n, num_actions]), dtype=tf.float32, name='w_q')
+            self.e_q = tf.Variable(tf.random_uniform([n, num_actions]), dtype=tf.float32, name='e_q')
+            self.prediction = tf.matmul(self.s, self.w_q)  # compute Q
+
+        with tf.variable_scope('Policy'):
+            self.w_u = tf.Variable(tf.zeros([n, num_actions]), dtype=tf.float32, name='w_u')
+            self.e_u = tf.Variable(tf.random_uniform([n, num_actions]), dtype=tf.float32, name='e_u')
+            self.action = tf.matmul(self.s, self.w_u)
+            self.acts_prob = tf.nn.softmax(self.action)
+
+        with tf.variable_scope('Update_Evaluation'):
+            self.r_bar = tf.Variable(tf.zeros([1, 1]), dtype=tf.float32, name='r_bar')
+            self.delta = self.r - self.r_bar + self.gamma * self.next_prediction[0, self.a_] \
+                         - self.prediction[0, self.a]  # sarsa update q value
+            self.r_bar_update = tf.assign_add(self.r_bar, self.eta * self.delta)
+            gra_v = tf.gradients(tf.reduce_mean(tf.square(self.delta)), self.w_q)
+            self.e_q_update = tf.assign_add(self.e_q, self.lamda_v * self.gamma * self.e_q + gra_v[0])  # update trace_v
+            self.w_q_update = tf.assign_add(self.w_q, self.alpha_v * self.delta * self.e_q)  # update w_v
+
+        with tf.variable_scope('Update_policy'):
+            prob = tf.reduce_sum(tf.multiply(self.acts_prob, self.prediction))   # all actions
+            # print(self.acts_prob)
+            gra_u = tf.gradients(prob, self.w_u)
+            # print(gra_u)
+            self.e_u_update = tf.assign_add(self.e_u, self.lamda_u * self.gamma * self.e_u + gra_u[0])  # update trace_u
+            self.w_u_update = tf.assign_add(self.w_u, self.alpha_u * self.delta * self.e_u)  # update w_u
+
+    def choose_action(self, s):
+        s = s[np.newaxis, :]
+        probs = self.sess.run(self.acts_prob, {self.s: s})  # get probabilities for all actions
+        return np.random.choice(np.arange(probs.shape[1]), p=probs.ravel())
+
+    def update(self, s, r, s_, a, a_):
+        s_ = s_[np.newaxis, :]
+        next_p = self.sess.run(self.prediction, {self.s: s_})
+        s = s[np.newaxis, :]
+        delta, _, r_bar, _, e_q, _, w_q, _, e_u, _, w_u = self.sess.run([self.delta,
+                                                                         self.r_bar_update, self.r_bar,
+                                                                         self.e_q_update, self.e_q,
+                                                                         self.w_q_update, self.w_q,
+                                                                         self.e_u_update, self.e_u,
+                                                                         self.w_u_update, self.w_u], \
+                                    {self.s: s, self.r: r, self.a: a, self.a_: a_, self.s_: s_, self.next_prediction: next_p})
+
+        return delta, r_bar, e_q, w_q, e_u, w_u
 
 
 class Actor(object):
@@ -132,20 +202,21 @@ class Actor(object):
 
             self.l1 = tf.matmul(self.s, self.w_actor)
 
-            self.acts_prob = tf.layers.dense(
-                inputs=self.l1,
-                units=n_actions,    # output units
-                activation=tf.nn.softmax,   # get action probabilities
-                # kernel_initializer=tf.random_normal_initializer(0., .1),  # weights
-                # bias_initializer=tf.constant_initializer(0.1),  # biases
-                name='acts_prob'
-            )
+            self.acts_prob = tf.nn.softmax(self.l1)
+            # self.acts_prob = tf.layers.dense(
+            #     inputs=self.l1,
+            #     units=n_actions,    # output units
+            #     activation=tf.nn.softmax,   # get action probabilities
+            #     # kernel_initializer=tf.random_normal_initializer(0., .1),  # weights
+            #     # bias_initializer=tf.constant_initializer(0.1),  # biases
+            #     name='acts_prob'
+            # )
 
         with tf.variable_scope('gradient'):
             gra = self.lr * tf.gradients(self.acts_prob, self.w_actor)
             print(gra[0].shape)
             self.all_gradient = tf.reduce_sum(gra * self.onehot_q, axis=0)
-            print(self.all_gradient.shape)
+            print('a', self.all_gradient.shape)
 
         with tf.variable_scope('update'):
             self.update = tf.assign_add(self.w_actor, self.all_gradient)
@@ -184,14 +255,19 @@ class Critic(object):
 
             self.w_critic = tf.Variable(tf.random_uniform([n_features, 1]), dtype=tf.float32, name= "w_critic")
             self.q = tf.matmul(self.x, self.w_critic)
-            print(self.q.shape)
+            print('qa', tf.gradients(self.q, self.w_critic))
+            print('q', self.q.shape)
 
         with tf.variable_scope('gradient'):
-            self.td_error = self.r + GAMMA * (1 - self.done) * self.q_next - self.q
+            self.td_error = self.r + GAMMA * self.q_next - self.q
             print(self.td_error.shape)
             # gra = self.lr * tf.gradients(self.q, self.w_critic) * self.td_error
-            self.w_critic += self.lr * self.td_error * self.x
-            # self.update = tf.assign_add(self.w_critic, gra)
+            # self.w_critic += self.lr * self.td_error * self.x
+
+            gra = tf.gradients(tf.reduce_mean(tf.square(self.td_error)), self.w_critic)
+            self.update = tf.assign_add(self.w_critic, gra[0])
+
+            print(self.update.shape)
 
     def learn(self, s, x, r, s_, a_, done, all_a):
         s, s_ = s[np.newaxis, :], s_[np.newaxis, :]
@@ -199,9 +275,9 @@ class Critic(object):
         for i in range(self.n_action):
             x_new = tile.oneHotFeature(np.append(x, all_a[i]))
             x_new = x_new[np.newaxis, :]
-            print(x_new.shape)
+
             all_q[i] = self.sess.run(self.q, {self.x: x_new, self.a: all_a[i]})[0]
-            print(all_q[i].shape)
+
 
         q_ = self.sess.run(self.q, {self.x: s_, self.a: a_, self.done: done})
         td_error, _ = self.sess.run([self.td_error, self.update],
@@ -469,94 +545,5 @@ class Critic(object):
 #         # print(all_action_td_error[0])
 #         if __debug__:  print('vp:{0}, r:{2}, critic loss {1}'.format(in_vp, loss, r)),
 #         return all_action_td_error[0]
-#
-#
-# class All_Actor_critic:
-#
-#     def __init__(self, stepSize, numOfTilings=8, numTile=4):
-#         self.numTile = numTile
-#         self.num0fTilings = numOfTilings
-#
-#         # divide step size equally to each tiling
-#         self.actor_step_size = stepSize / numOfTilings
-#         self.critic_step_size = stepSize / numOfTilings
-#
-#         self.tile_coder = Tilecoder(env.observation_space.high, env.observation_space.low, \
-#                                     self.num0fTilings, self.numTile, env.action_space.n)
-#
-#         # critic weights and actor weights
-#         self.critic_weights = np.zeros(self.tile_coder.numTiles)
-#         self.actor_weights = np.zeros([self.tile_coder.numTiles, env.action_space.n])
-#         self.discount_rate = 0.9
-#
-#     def actor_learning(self, td_error, state_feature):
-#
-#         self.actor_weights += self.actor_step_size * td_error * state_feature
-#
-#     def get_action(self, state):
-#
-#         np.dot(state, self.actor_weights)
-#
-#         return
-#
-#     def critic_learning(self, td_error, state_features):
-#
-#         self.critic_weights += self.critic_step_size * td_error * state_features
-#
-#     def get_value(self, state):
-#
-#         return np.dot(self.critic_weights, state)
-#
-#
-#     def update(self, td_error, state_next_feature, state_feature):
-#
-#         self.critic_learning(td_error, state_next_feature)
-#         self.actor_learning(td_error, state_feature)
-#
-#
-# sess = tf.Session()
-#
-# actor = Actor(sess, n_features=N_F, n_actions=N_A, lr=LR_A)
-# critic = Critic(sess, n_features=N_F, lr=LR_C)     # we need a good teacher, so the teacher should learn faster than the actor
-#
-# sess.run(tf.global_variables_initializer())
-#
-# if OUTPUT_GRAPH:
-#     summary_writer = tf.summary.FileWriter("logs/", sess.graph)
-#
-# for i_episode in range(MAX_EPISODE):
-#
-#     s = env.reset()
-#     t = 0
-#     track_r = []
-#     while True:
-#         if RENDER: env.render()
-#
-#         a = actor.choose_action(s)
-#
-#         s_, r, done, info = env.step(a)
-#
-#         if done: r = -20
-#
-#         track_r.append(r)
-#
-#         td_error = critic.learn(s, r, s_)  # gradient = grad[r + gamma * V(s_) - V(s)]
-#         actor.learn(s, a, td_error)     # true_gradient = grad[logPi(s,a) * td_error]
-#
-#         s = s_
-#         t += 1
-#
-#         if done or t >= MAX_EP_STEPS:
-#             ep_rs_sum = sum(track_r)
-#
-#             if 'running_reward' not in globals():
-#                 running_reward = ep_rs_sum
-#             else:
-#                 running_reward = running_reward * 0.95 + ep_rs_sum * 0.05
-#             if running_reward > DISPLAY_REWARD_THRESHOLD: RENDER = True  # rendering
-#             print("episode:", i_episode, "  reward:", int(running_reward))
-#             record = summary_pb2.Summary.Value(tag='reward', simple_value=running_reward)
-#             record_value = summary_pb2.Summary(value=[record])
-#             summary_writer.add_summary(record_value, i_episode)
-#             break
+
 

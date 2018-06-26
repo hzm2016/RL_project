@@ -5,9 +5,11 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Tile_coding.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Tile_coding.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/Allactions_AC.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/NonLinearActorCr.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,92 +18,123 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="DockManager">
+    <window id="2">
+      <content type="file-editors">
+        <state>
+          <splitter split-orientation="horizontal" split-proportion="0.250774">
+            <split-first>
+              <leaf>
+                <file leaf-file-name="LineartensorflowAC.py" pinned="false" current-in-tab="true">
+                  <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py">
+                    <provider selected="true" editor-type-id="text-editor">
+                      <state relative-caret-position="-1403">
+                        <caret line="151" column="49" lean-forward="true" selection-start-line="151" selection-start-column="49" selection-end-line="151" selection-end-column="49" />
+                        <folding>
+                          <element signature="e#185#203#0" expanded="true" />
+                          <element signature="e#381#406#0" />
+                          <element signature="e#1145#4447#0" />
+                          <element signature="e#3332#3349#0" />
+                          <element signature="e#7221#9519#0" />
+                        </folding>
+                      </state>
+                    </provider>
+                  </entry>
+                </file>
+              </leaf>
+            </split-first>
+            <split-second>
+              <leaf>
+                <file leaf-file-name="LinearActorCritic.py" pinned="false" current-in-tab="true">
+                  <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py">
+                    <provider selected="true" editor-type-id="text-editor">
+                      <state relative-caret-position="1311">
+                        <caret line="188" column="41" lean-forward="true" selection-start-line="188" selection-start-column="41" selection-end-line="188" selection-end-column="41" />
+                        <folding>
+                          <element signature="e#1325#1362#0" expanded="true" />
+                          <element signature="e#1480#4169#0" />
+                        </folding>
+                      </state>
+                    </provider>
+                  </entry>
+                </file>
+              </leaf>
+            </split-second>
+          </splitter>
+        </state>
+      </content>
+    </window>
+  </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5158166">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="run_MountainCar.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="292">
-                  <caret line="63" column="16" lean-forward="true" selection-start-line="63" selection-start-column="16" selection-end-line="63" selection-end-column="16" />
-                  <folding>
-                    <element signature="e#0#10#0" expanded="true" />
-                    <element signature="e#1117#1245#0" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="LinearActorCritic.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="204">
-                  <caret line="147" column="67" selection-start-line="147" selection-start-column="67" selection-end-line="147" selection-end-column="67" />
-                  <folding>
-                    <element signature="e#1325#1362#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="AC_CartPole.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/AC_CartPole.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="531">
-                  <caret line="147" column="31" lean-forward="true" selection-start-line="147" selection-start-column="31" selection-end-line="147" selection-end-column="31" />
-                  <folding>
-                    <element signature="e#0#18#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="RL_brain.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-293">
-                  <caret line="135" column="26" lean-forward="true" selection-start-line="135" selection-start-column="26" selection-end-line="135" selection-end-column="26" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="run_CartPole.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-1119">
-                  <caret line="14" column="16" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
-                  <folding>
-                    <element signature="e#0#10#0" expanded="true" />
-                    <element signature="e#1416#1544#0" />
-                    <element signature="e#1577#1695#0" />
-                    <element signature="e#1697#1720#0" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="LineartensorflowAC.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-628">
-                  <caret line="97" column="41" lean-forward="true" selection-start-line="97" selection-start-column="41" selection-end-line="97" selection-end-column="41" />
-                  <folding>
-                    <element signature="e#24#184#1" />
-                    <element signature="e#185#203#0" expanded="true" />
-                    <element signature="e#381#404#0" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="run_CartPole.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="735">
+              <caret line="55" selection-start-line="55" selection-end-line="55" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#1416#1544#0" />
+                <element signature="e#1577#1695#0" />
+                <element signature="e#1638#1661#0" />
+                <element signature="e#5126#5158#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Tile_coding.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Tile_coding.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="325">
+              <caret line="130" selection-start-line="130" selection-end-line="130" />
+              <folding>
+                <element signature="e#1555#1573#0" expanded="true" />
+                <element signature="e#1671#2748#0" />
+                <element signature="e#2803#2969#0" />
+                <element signature="e#3043#3576#0" />
+                <element signature="e#3666#4239#0" />
+                <element signature="e#4285#4393#0" />
+                <element signature="e#4420#7610#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AC_CartPole.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/AC_CartPole.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="147" column="31" lean-forward="true" selection-start-line="147" selection-start-column="31" selection-end-line="147" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="run_MountainCar.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="561">
+              <caret line="129" column="1" lean-forward="true" selection-start-line="129" selection-start-column="1" selection-end-line="129" selection-end-column="1" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RL_brain.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="19" column="6" lean-forward="true" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -130,14 +163,14 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/AC_CartPole.py" />
-        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py" />
-        <option value="$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/Allactions_AC.py" />
         <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Tile coding.py" />
-        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Tile_coding.py" />
-        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py" />
         <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py" />
-        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py" />
+        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py" />
         <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py" />
+        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Tile_coding.py" />
+        <option value="$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/Allactions_AC.py" />
+        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py" />
+        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py" />
       </list>
     </option>
   </component>
@@ -198,7 +231,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ToolWindowRun.ShowToolbar" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Peg_in_Hole" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../reinforcement-learning-an-introduction-master" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -213,7 +246,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.run_CartPole">
-    <configuration name="LinearActorCritic" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="Allactions_AC" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="RL_project" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -221,11 +254,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/contents/8_Actor_Critic_Advantage" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/NonLinearActorCr.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -249,7 +282,7 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="Tile_coding" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="RL_brain" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="RL_project" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -261,7 +294,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Tile_coding.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -306,17 +339,17 @@
     <list>
       <item itemvalue="Python.run_CartPole" />
       <item itemvalue="Python.LineartensorflowAC" />
-      <item itemvalue="Python.Tile_coding" />
       <item itemvalue="Python.run_MountainCar" />
-      <item itemvalue="Python.LinearActorCritic" />
+      <item itemvalue="Python.RL_brain" />
+      <item itemvalue="Python.Allactions_AC" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.run_CartPole" />
-        <item itemvalue="Python.LinearActorCritic" />
+        <item itemvalue="Python.Allactions_AC" />
         <item itemvalue="Python.run_MountainCar" />
         <item itemvalue="Python.LineartensorflowAC" />
-        <item itemvalue="Python.Tile_coding" />
+        <item itemvalue="Python.RL_brain" />
       </list>
     </recent_temporary>
   </component>
@@ -346,14 +379,15 @@
     <frame x="65" y="-4" width="1855" height="1084" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15539804" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22846238" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.5083682" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3294979" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3294979" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.3294979" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.3294979" />
-      <window_info active="true" anchor="bottom" id="Run" internal_type="SLIDING" order="2" type="SLIDING" visible="true" weight="0.0" />
+      <window_info anchor="bottom" id="Run" internal_type="SLIDING" order="2" type="SLIDING" weight="0.0" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.3294979" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.3294979" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39958158" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -362,7 +396,6 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.3294979" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -382,9 +415,11 @@
         <state relative-caret-position="1485">
           <caret line="105" column="59" selection-start-line="105" selection-start-column="59" selection-end-line="105" selection-end-column="59" />
           <folding>
-            <element signature="e#24#184#1" />
             <element signature="e#185#203#0" expanded="true" />
-            <element signature="e#381#404#0" />
+            <element signature="e#381#406#0" />
+            <element signature="e#1145#4447#0" />
+            <element signature="e#3332#3349#0" />
+            <element signature="e#7221#9519#0" />
           </folding>
         </state>
       </provider>
@@ -397,7 +432,8 @@
             <element signature="e#0#10#0" expanded="true" />
             <element signature="e#1416#1544#0" />
             <element signature="e#1577#1695#0" />
-            <element signature="e#1697#1720#0" />
+            <element signature="e#1638#1661#0" />
+            <element signature="e#5126#5158#0" />
           </folding>
         </state>
       </provider>
@@ -427,9 +463,11 @@
         <state relative-caret-position="150">
           <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
           <folding>
-            <element signature="e#24#184#1" />
             <element signature="e#185#203#0" expanded="true" />
-            <element signature="e#381#404#0" />
+            <element signature="e#381#406#0" />
+            <element signature="e#1145#4447#0" />
+            <element signature="e#3332#3349#0" />
+            <element signature="e#7221#9519#0" />
           </folding>
         </state>
       </provider>
@@ -438,6 +476,15 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1035">
           <caret line="69" column="21" selection-start-line="69" selection-start-column="8" selection-end-line="69" selection-end-column="21" />
+          <folding>
+            <element signature="e#1555#1573#0" expanded="true" />
+            <element signature="e#1671#2748#0" />
+            <element signature="e#2803#2969#0" />
+            <element signature="e#3043#3576#0" />
+            <element signature="e#3666#4239#0" />
+            <element signature="e#4285#4393#0" />
+            <element signature="e#4420#7610#0" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -449,7 +496,8 @@
             <element signature="e#0#10#0" expanded="true" />
             <element signature="e#1416#1544#0" />
             <element signature="e#1577#1695#0" />
-            <element signature="e#1697#1720#0" />
+            <element signature="e#1638#1661#0" />
+            <element signature="e#5126#5158#0" />
           </folding>
         </state>
       </provider>
@@ -464,7 +512,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/Allactions_AC.py">
+    <entry file="file://$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/NonLinearActorCr.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
           <caret line="24" column="12" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
@@ -501,7 +549,8 @@
             <element signature="e#0#10#0" expanded="true" />
             <element signature="e#1416#1544#0" />
             <element signature="e#1577#1695#0" />
-            <element signature="e#1697#1720#0" />
+            <element signature="e#1638#1661#0" />
+            <element signature="e#5126#5158#0" />
           </folding>
         </state>
       </provider>
@@ -511,9 +560,11 @@
         <state relative-caret-position="3120">
           <caret line="211" column="51" lean-forward="true" selection-start-line="211" selection-start-column="51" selection-end-line="211" selection-end-column="51" />
           <folding>
-            <element signature="e#24#184#1" />
             <element signature="e#185#203#0" expanded="true" />
-            <element signature="e#381#404#0" />
+            <element signature="e#381#406#0" />
+            <element signature="e#1145#4447#0" />
+            <element signature="e#3332#3349#0" />
+            <element signature="e#7221#9519#0" />
           </folding>
         </state>
       </provider>
@@ -545,7 +596,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/Allactions_AC.py">
+    <entry file="file://$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/NonLinearActorCr.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="735">
           <caret line="140" lean-forward="true" selection-start-line="140" selection-end-line="140" />
@@ -614,13 +665,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python3.5/dist-packages/tensorflow/python/client/session.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="1110" selection-start-line="1110" selection-end-line="1110" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/contents/5_Deep_Q_Network/DQN_modified.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="247">
@@ -629,25 +673,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Tile coding.py" />
-    <entry file="file://$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/Allactions_AC.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="24" column="12" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
-          <folding>
-            <element signature="e#181#199#0" expanded="true" />
-            <element signature="e#987#3296#0" />
-            <element signature="e#3325#5420#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Tile_coding.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="100" lean-forward="true" selection-start-line="100" selection-end-line="100" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/lib/python3.5/dist-packages/tensorflow/python/ops/variables.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="310">
@@ -655,39 +680,56 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py">
+    <entry file="file:///usr/local/lib/python3.5/dist-packages/tensorflow/python/client/session.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-293">
-          <caret line="135" column="26" lean-forward="true" selection-start-line="135" selection-start-column="26" selection-end-line="135" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-628">
-          <caret line="97" column="41" lean-forward="true" selection-start-line="97" selection-start-column="41" selection-end-line="97" selection-end-column="41" />
-          <folding>
-            <element signature="e#24#184#1" />
-            <element signature="e#185#203#0" expanded="true" />
-            <element signature="e#381#404#0" />
-          </folding>
+        <state relative-caret-position="216">
+          <caret line="1110" selection-start-line="1110" selection-end-line="1110" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="63" column="16" lean-forward="true" selection-start-line="63" selection-start-column="16" selection-end-line="63" selection-end-column="16" />
+        <state relative-caret-position="561">
+          <caret line="129" column="1" lean-forward="true" selection-start-line="129" selection-start-column="1" selection-end-line="129" selection-end-column="1" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#1117#1245#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1403">
+          <caret line="151" column="49" lean-forward="true" selection-start-line="151" selection-start-column="49" selection-end-line="151" selection-end-column="49" />
+          <folding>
+            <element signature="e#185#203#0" expanded="true" />
+            <element signature="e#381#406#0" />
+            <element signature="e#1145#4447#0" />
+            <element signature="e#3332#3349#0" />
+            <element signature="e#7221#9519#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Tile_coding.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="130" selection-start-line="130" selection-end-line="130" />
+          <folding>
+            <element signature="e#1555#1573#0" expanded="true" />
+            <element signature="e#1671#2748#0" />
+            <element signature="e#2803#2969#0" />
+            <element signature="e#3043#3576#0" />
+            <element signature="e#3666#4239#0" />
+            <element signature="e#4285#4393#0" />
+            <element signature="e#4420#7610#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/AC_CartPole.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="531">
+        <state relative-caret-position="360">
           <caret line="147" column="31" lean-forward="true" selection-start-line="147" selection-start-column="31" selection-end-line="147" selection-end-column="31" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
@@ -695,26 +737,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py">
+    <entry file="file://$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/NonLinearActorCr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1119">
-          <caret line="14" column="16" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
+        <state relative-caret-position="381">
+          <caret line="40" column="20" selection-start-line="40" selection-start-column="20" selection-end-line="40" selection-end-column="20" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#1416#1544#0" />
-            <element signature="e#1577#1695#0" />
-            <element signature="e#1697#1720#0" />
+            <element signature="e#181#199#0" expanded="true" />
+            <element signature="e#987#3283#0" />
+            <element signature="e#3325#5420#0" />
+            <element signature="e#5450#7366#0" />
+            <element signature="e#7397#10333#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="147" column="67" selection-start-line="147" selection-start-column="67" selection-end-line="147" selection-end-column="67" />
+        <state relative-caret-position="1311">
+          <caret line="188" column="41" lean-forward="true" selection-start-line="188" selection-start-column="41" selection-end-line="188" selection-end-column="41" />
           <folding>
             <element signature="e#1325#1362#0" expanded="true" />
+            <element signature="e#1480#4169#0" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="735">
+          <caret line="55" selection-start-line="55" selection-end-line="55" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#1416#1544#0" />
+            <element signature="e#1577#1695#0" />
+            <element signature="e#1638#1661#0" />
+            <element signature="e#5126#5158#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="19" column="6" lean-forward="true" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
         </state>
       </provider>
     </entry>

@@ -51,6 +51,7 @@ def getValueFeature(obv):
 sess = tf.Session()
 
 DisAC = DiscreteActorCritic(sess, MaxSize, env.action_space.n, 0.99, 0.01, 0.001, 0.0001, 0.3, 0.3)
+DisAC = DisAllActions(sess, MaxSize, env.action_space.n, 0.99, 0.0, 0.0001, 0.00001, 0., 0.)
 
 if OUTPUT_GRAPH:
     summary_writer = tf.summary.FileWriter("logs/", sess.graph)
@@ -68,12 +69,15 @@ for i_episode in range(MAX_EPISODE):
 
         s_, r, done, info = env.step(a)
 
+        a_ = DisAC.choose_action(getValueFeature(s_))
+
         if done:
-            r = -20
+            r = 10
 
         track_r.append(r)
-
-        DisAC.update(getValueFeature(s), r, getValueFeature(s_))
+        delta, r_bar, e_q, w_q, e_u, w_u = DisAC.update(getValueFeature(s), r, getValueFeature(s_), a, a_)
+        # print('delta:', delta, 'r_bar:', r_bar, 'e_q:', e_q, 'w_q:', w_q, 'e_u:', e_u, 'w_u', w_u)
+        print('delta', delta)
 
         s = s_
         t += 1

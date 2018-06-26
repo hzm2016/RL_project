@@ -129,8 +129,6 @@ def getOneHotFeature(maxsize, Tiles):
     return feature
 
 
-
-
 class Tilecoder:
 
     def __init__(self, env, numTilings, tilesPerTiling):

@@ -1,8 +1,5 @@
 import gym
 from RL_brain import *
-import tensorflow as tf
-from tensorflow.core.framework import summary_pb2
-import matplotlib.pyplot as plt
 from Tile_coding import *
 from LinearActorCritic import DiscreteActorCritic
 import numpy as np
@@ -36,7 +33,7 @@ print(env.observation_space.high)
 print(env.observation_space.low)
 
 """"Tile coding"""
-NumOfTilings = 8
+NumOfTilings = 10
 MaxSize = 2048
 HashTable = IHT(MaxSize)
 
@@ -165,10 +162,52 @@ def getValueFeature(obv):
 #             break
 
 
+# LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, 0.99, 0., 0.001, 0.0001, 0.3, 0.3)
+
+
+# for i_espisode in range(3000):
+#
+#     t = 0.
+#     track_r = []
+#     observation = env.reset()
+#     action = LinearAC.start(getValueFeature(observation))
+#     while True:
+#
+#         # if RENDER:
+#         #     env.render()
+#
+#         observation_, reward, done, info = env.step(action)
+#
+#         # if done:
+#         #     reward = 10
+#
+#         track_r.append(reward)
+#
+#         action, delta = LinearAC.step(reward, getValueFeature(observation))
+#
+#         # print('delat', delta)
+#
+#         observation = observation_
+#
+#         t += 1
+#
+#         if done or t > MAX_EP_STEPS:
+#
+#             ep_rs_sum = sum(track_r)
+#             if 'running_reward' not in globals():
+#                 running_reward = ep_rs_sum
+#             else:
+#                 running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
+#             # if running_reward > DISPLAY_REWARD_THRESHOLD:
+#             #     RENDER = True     # rendering
+#             print("episode:", i_espisode,  "reward:", int(running_reward))
+#
+#             break
+
+
 def play(LinearAC):
 
     t = 0
-    running_reward = 0.
     track_r = []
     observation = env.reset()
     action = LinearAC.start(getValueFeature(observation))
@@ -186,7 +225,11 @@ def play(LinearAC):
 
         action, delta = LinearAC.step(reward, getValueFeature(observation))
 
+        # print('delat', delta)
+
         observation = observation_
+
+        t += 1
 
         if done or t > MAX_EP_STEPS:
 
@@ -207,9 +250,9 @@ if __name__ == '__main__':
 
     runs = 30
     episodes = 3000
-    alphas = np.arange(1, 8) / 800
+    alphas = np.arange(1, 8) / 10000
     lams = [0.99, 0.95, 0.5, 0]
-    eta = 0.01
+    eta = 0.0
     gamma = 0.9
 
     if load:
