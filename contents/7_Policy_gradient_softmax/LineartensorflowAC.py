@@ -16,29 +16,8 @@ from Tile_coding import Tilecoder
 np.random.seed(2)
 tf.set_random_seed(2)
 
-# # """Superparameters"""
-# OUTPUT_GRAPH = True
-# MAX_EPISODE = 3000
-# DISPLAY_REWARD_THRESHOLD = 30001  # renders environment if total episode reward is greater then this threshold
-# MAX_EP_STEPS = 1000   # maximum time step in one episode
-# RENDER = False  # rendering wastes time
-# GAMMA = 0.99     # reward discount in TD error
-# LR_A = 0.001    # learning rate for actor
-# LR_C = 0.01     # learning rate for critic
-#
-# """Hyperparameters for tilecoding"""
-# NUMBER_OF_TILINGS = 8
-# TILING_CARDINALITY = 10
-#
-# env = gym.make('CartPole-v0')
-# env._max_episode_steps = 1000
-# env.seed(1)  # reproducible
-# env = env.unwrapped
-#
-# N_F = env.observation_space.shape[0]
-# N_A = env.action_space.n
-#
-# tile = Tilecoder(env, 4, 8)
+__all__ = ['PolicyGradient', 'DiscreteActorCritic', 'DisAllActions']
+
 
 """REINFORCE"""
 class PolicyGradient(object):
@@ -47,8 +26,8 @@ class PolicyGradient(object):
             self,
             n_actions,
             n_features,
-            learning_rate=0.01,
-            reward_decay=0.95,
+            learning_rate=0.0001,
+            reward_decay=0.99,
             output_graph=False,
     ):
         self.n_actions = n_actions
@@ -78,10 +57,10 @@ class PolicyGradient(object):
         # fc1
         layer = tf.layers.dense(
             inputs=self.tf_obs,
-            units=10,
-            activation=tf.nn.tanh,  # tanh activation
-            kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.3),
-            bias_initializer=tf.constant_initializer(0.1),
+            units=self.n_features,
+            activation=None,  # tanh activation
+            kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.),
+            bias_initializer=tf.constant_initializer(0.),
             name='fc1'
         )
         # fc2
@@ -89,8 +68,8 @@ class PolicyGradient(object):
             inputs=layer,
             units=self.n_actions,
             activation=None,
-            kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.3),
-            bias_initializer=tf.constant_initializer(0.1),
+            kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.),
+            bias_initializer=tf.constant_initializer(0.),
             name='fc2'
         )
 
@@ -185,16 +164,22 @@ class DiscreteActorCritic:
             self.r_bar = tf.Variable(tf.zeros([1, 1]), dtype=tf.float32, name='r_bar')
             self.delta = self.r - self.r_bar + self.gamma * self.next_prediction - self.prediction
             self.r_bar = tf.assign_add(self.r_bar, self.eta * self.delta)
-            gra_v = tf.gradients(tf.reduce_mean(tf.square(self.delta)), self.w_v)
-            self.e_v = self.lamda_v * self.gamma * self.e_v + gra_v[0]  # update trace_v
-            # print(self.w_v)
-            # print(self.alpha_v * delta * self.e_v)
+            # gra_v = tf.gradients(tf.reduce_mean(tf.square(self.delta)), self.w_v)
+            # self.e_v = self.lamda_v * self.gamma * self.e_v + gra_v[0]  # update trace_v
+            self.e_v = self.lamda_v * self.gamma * self.e_v + tf.transpose(self.s)  # update trace_v
             self.w_v = tf.assign_add(self.w_v, self.alpha_v * self.delta * self.e_v)  # update w_v
 
         with tf.variable_scope('Update_Actor'):
+            # self.mid = tf.Variable(tf.zeros([num_actions, n]), dtype=tf.float32, name='mid')
+            # value = tf.scatter_update(self.mid, [self.a], self.s)
             log_prob = tf.reduce_mean(tf.log(self.acts_prob[0, self.a]))
             gra_u = tf.gradients(log_prob, self.w_u)
             self.e_u = self.lamda_u * self.gamma * self.e_u + gra_u[0]  # update trace_u
+            # self.e_u = self.lamda_u * self.gamma * self.e_u
+            # self.e_u = self.e_u + tf.transpose(value)
+            # for other in range(self.num_actions):
+            #     value_1 = tf.scatter_update(self.mid, [other], self.s)
+            #     self.e_u = self.e_u - tf.transpose(value_1) * self.acts_prob[0, other]
             self.w_u = tf.assign_add(self.w_u, self.alpha_u * self.delta * self.e_u)  # update w_u
 
     def choose_action(self, s):
@@ -258,16 +243,14 @@ class DisAllActions:
                          - self.prediction[0, self.a]   # sarsa update q value
             self.r_bar_update = tf.assign_add(self.r_bar, self.eta * self.delta)
             gra_v = tf.gradients(tf.reduce_mean(tf.square(self.delta)), self.w_q)
-            self.e_q_update = tf.assign_add(self.e_q, self.lamda_v * self.gamma * self.e_q + gra_v[0])  # update trace_v
-            self.w_q_update = tf.assign_add(self.w_q, self.alpha_v * self.delta * self.e_q)  # update w_v
+            self.e_q_update = tf.assign(self.e_q, self.lamda_v * self.gamma * self.e_q + gra_v[0])  # update trace_v
+            self.w_q_update = tf.assign_add(self.w_q, self.alpha_v * self.e_q)  # update w_v
 
         with tf.variable_scope('Update_policy'):
-            prob = tf.reduce_sum(tf.multiply(self.acts_prob, self.prediction))   # all actions
-            # print(self.acts_prob)
-            gra_u = tf.gradients(prob, self.w_u)
-            # print(gra_u)
-            self.e_u_update = tf.assign_add(self.e_u, self.lamda_u * self.gamma * self.e_u + gra_u[0])  # update trace_u
-            self.w_u_update = tf.assign_add(self.w_u, self.alpha_u * self.delta * self.e_u)  # update w_u
+            self.prob_prediction = tf.reduce_sum(tf.multiply(self.acts_prob, self.prediction))   # all actions
+            gra_u = tf.gradients(self.prob_prediction, self.w_u)
+            self.e_u_update = tf.assign(self.e_u, self.lamda_u * self.gamma * self.e_u + gra_u[0])  # update trace_u
+            self.w_u_update = tf.assign_add(self.w_u, self.alpha_u * self.e_u)  # update w_u
 
     def choose_action(self, s):
         s = s[np.newaxis, :]
