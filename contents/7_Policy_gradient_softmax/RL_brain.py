@@ -7,6 +7,7 @@ tf.set_random_seed(2)
 
 __all__ = ['PolicyGradient', 'Actor', 'Critic', 'ValueFunction']
 
+
 """"REINFORCE"""
 class PolicyGradient:
 

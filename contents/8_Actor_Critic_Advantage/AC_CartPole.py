@@ -10,13 +10,13 @@ tf.set_random_seed(2)  # reproducible
 OUTPUT_GRAPH = True
 MAX_EPISODE = 4000
 DISPLAY_REWARD_THRESHOLD = 2001  # renders environment if total episode reward is greater then this threshold
-MAX_EP_STEPS = 1000   # maximum time step in one episode
+MAX_EP_STEPS = 5000   # maximum time step in one episode
 RENDER = False  # rendering wastes time
 GAMMA = 0.99    # reward discount in TD error
-LR_A = 0.0001    # learning rate for actor
-LR_C = 0.001     # learning rate for critic
+LR_A = 0.00001    # learning rate for actor
+LR_C = 0.0001     # learning rate for critic
 
-env = gym.make('CartPole-v0')
+env = gym.make('MountainCar-v0')
 env.seed(1)  # reproducible
 env = env.unwrapped
 
@@ -36,7 +36,7 @@ class Actor(object):
         with tf.variable_scope('Actor'):
             l1 = tf.layers.dense(
                 inputs=self.s,
-                units=20,    # number of hidden units
+                units=75,    # number of hidden units
                 activation=tf.nn.relu,
                 kernel_initializer=tf.random_normal_initializer(0., .1),    # weights
                 bias_initializer=tf.constant_initializer(0.1),  # biases
@@ -95,7 +95,7 @@ class Critic(object):
         with tf.variable_scope('Critic'):
             l1 = tf.layers.dense(
                 inputs=self.s,
-                units=20,  # number of hidden units
+                units=75,  # number of hidden units
                 activation=tf.nn.relu,  # None
                 # have to be linear to make sure the convergence of actor.
                 # But linear approximator seems hardly learns the correct Q.

@@ -1,6 +1,6 @@
 """Linear Actor Critic"""
 import gym
-from RL_brain import *
+from LineartensorflowAC import *
 from Tile_coding import *
 from LinearActorCritic import DiscreteActorCritic
 import numpy as np
@@ -54,52 +54,56 @@ def getValueFeature(obv):
 
     return activeTiles
 
-# NPG = PolicyGradient(
-#     n_actions=env.action_space.n,
-#     n_features=env.observation_space.shape[0],
-#     learning_rate=0.02,
-#     reward_decay=0.99,
-#     # output_graph=True,
-# )
-#
-#
-# for i_episode in range(3000):
-#
-#     observation = env.reset()
-#
-#     while True:
-#         # if RENDER:
-#         #     env.render()
-#
-#         action = NPG.choose_action(observation)
-#
-#         observation_, reward, done, info = env.step(action)
-#
-#         NPG.store_transition(observation, action, reward)
-#
-#         if done:
-#             ep_rs_sum = sum(NPG.ep_rs)
-#
-#             if 'running_reward' not in globals():
-#                 running_reward = ep_rs_sum
-#             else:
-#                 running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
-#             if running_reward > DISPLAY_REWARD_THRESHOLD: RENDER = True     # rendering
-#             print("episode:", i_episode, "  reward:", int(running_reward))
-#
-#             vt = NPG.learn()
-#
-#             # if i_episode == 0:
-#             #     plt.plot(vt)    # plot the episode vt
-#             #     plt.xlabel('episode steps')
-#             #     plt.ylabel('normalized state-action value')
-#             #     plt.show()
-#             break
-#
-#         observation = observation_
+
+NPG = PolicyGradient(
+    n_actions=env.action_space.n,
+    n_features=MaxSize,
+    learning_rate=0.001,
+    reward_decay=0.99,
+    output_graph=False,
+)
+
+
+for i_episode in range(3000):
+
+    observation = env.reset()
+    t = 0
+
+    while True:
+        # if RENDER:
+        #     env.render()
+
+        action = NPG.choose_action(getValueFeature(observation))
+
+        observation_, reward, done, info = env.step(action)
+
+        NPG.store_transition(getValueFeature(observation), action, reward)
+
+        if done or t >= MAX_EP_STEPS:
+            ep_rs_sum = sum(NPG.ep_rs)
+
+            if 'running_reward' not in globals():
+                running_reward = ep_rs_sum
+            else:
+                running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
+            if running_reward > DISPLAY_REWARD_THRESHOLD: RENDER = True     # rendering
+            print("episode:", i_episode, "  reward:", int(running_reward))
+
+            vt = NPG.learn()
+
+            # if i_episode == 0:
+            #     plt.plot(vt)    # plot the episode vt
+            #     plt.xlabel('episode steps')
+            #     plt.ylabel('normalized state-action value')
+            #     plt.show()
+            break
+
+        t += 1
+
+        observation = observation_
 
 # LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, 0.99, 0., 0.001, 0.0001, 0.3, 0.3)
-
+#
 # for i_espisode in range(3000):
 #
 #     t = 0.
@@ -139,94 +143,95 @@ def getValueFeature(obv):
 #
 #             break
 
-def play(LinearAC):
 
-    t = 0
-    track_r = []
-    observation = env.reset()
-    action = LinearAC.start(getValueFeature(observation))
-    while True:
+# def play(LinearAC):
+#
+#     t = 0
+#     track_r = []
+#     observation = env.reset()
+#     action = LinearAC.start(getValueFeature(observation))
+#     while True:
+#
+#         # if RENDER:
+#         #     env.render()
+#
+#         observation_, reward, done, info = env.step(action)
+#
+#         # if done:
+#         #     reward = 10
+#
+#         track_r.append(reward)
+#
+#         action, delta = LinearAC.step(reward, getValueFeature(observation))
+#
+#         # print('delat', delta)
+#
+#         observation = observation_
+#
+#         t += 1
+#
+#         if done or t > MAX_EP_STEPS:
+#
+#             ep_rs_sum = sum(track_r)
+#             if 'running_reward' not in globals():
+#                 running_reward = ep_rs_sum
+#             else:
+#                 running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
+#             if running_reward > DISPLAY_REWARD_THRESHOLD:
+#                 RENDER = True     # rendering
+#             print("steps:", t, "  reward:", int(running_reward))
+#
+#             break
+#     return t, int(running_reward)
 
-        # if RENDER:
-        #     env.render()
 
-        observation_, reward, done, info = env.step(action)
-
-        # if done:
-        #     reward = 10
-
-        track_r.append(reward)
-
-        action, delta = LinearAC.step(reward, getValueFeature(observation))
-
-        # print('delat', delta)
-
-        observation = observation_
-
-        t += 1
-
-        if done or t > MAX_EP_STEPS:
-
-            ep_rs_sum = sum(track_r)
-            if 'running_reward' not in globals():
-                running_reward = ep_rs_sum
-            else:
-                running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
-            if running_reward > DISPLAY_REWARD_THRESHOLD:
-                RENDER = True     # rendering
-            print("steps:", t, "  reward:", int(running_reward))
-
-            break
-    return t, int(running_reward)
-
-
-if __name__ == '__main__':
-
-    runs = 30
-    episodes = 3000
-    alphas = np.arange(1, 8) / 10000
-    lams = [0.99, 0.95, 0.5, 0]
-    eta = 0.0
-    gamma = 0.9
-
-    if load:
-        with open('steps.bin', 'rb') as f:
-            steps = pickle.load(f)
-        with open('rewards.bin', 'rb') as s:
-            rewards = pickle.load(s)
-    else:
-
-        steps = np.zeros((len(lams), len(alphas), runs, episodes))
-        rewards = np.zeros((len(lams), len(alphas), runs, episodes))
-        for lamInd, lam in enumerate(lams):
-            for alphaInd, alpha in enumerate(alphas):
-                for run in range(runs):
-                    LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
-                    for ep in range(episodes):
-                        step, reward = play(LinearAC)
-                        steps[lamInd, alphaInd, run, ep] = step
-                        rewards[lamInd, alphaInd, run, ep] = reward
-                        print('lambda %f, alpha %f, run %d, episode %d, steps %d' %
-                              (lam, alpha, run, ep, step))
-        with open('steps.bin', 'wb') as f:
-            pickle.dump(steps, f)
-        with open('rewards.bin', 'wb') as s:
-            pickle.dump(rewards, s)
-
-    # # average over episodes
-    # steps = np.mean(steps, axis=3)
-    #
-    # # average over runs
-    # steps = np.mean(steps, axis=2)
-
-    # global figureIndex
-    # plt.figure(figureIndex)
-    # figureIndex += 1
-    # for lamInd, lam in enumerate(lams):
-    #     plt.plot(alphas, steps[lamInd, :], label='lambda = %s' % (str(lam)))
-    # plt.xlabel('alpha * # of tilings (8)')
-    # plt.ylabel('averaged steps per episode')
-    # plt.ylim([180, 300])
-    # plt.legend()
+# if __name__ == '__main__':
+#
+#     runs = 30
+#     episodes = 3000
+#     alphas = np.arange(1, 8) / 10000
+#     lams = [0.99, 0.95, 0.5, 0]
+#     eta = 0.0
+#     gamma = 0.9
+#
+#     if load:
+#         with open('steps.bin', 'rb') as f:
+#             steps = pickle.load(f)
+#         with open('rewards.bin', 'rb') as s:
+#             rewards = pickle.load(s)
+#     else:
+#
+#         steps = np.zeros((len(lams), len(alphas), runs, episodes))
+#         rewards = np.zeros((len(lams), len(alphas), runs, episodes))
+#         for lamInd, lam in enumerate(lams):
+#             for alphaInd, alpha in enumerate(alphas):
+#                 for run in range(runs):
+#                     LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
+#                     for ep in range(episodes):
+#                         step, reward = play(LinearAC)
+#                         steps[lamInd, alphaInd, run, ep] = step
+#                         rewards[lamInd, alphaInd, run, ep] = reward
+#                         print('lambda %f, alpha %f, run %d, episode %d, steps %d' %
+#                               (lam, alpha, run, ep, step))
+#         with open('steps.bin', 'wb') as f:
+#             pickle.dump(steps, f)
+#         with open('rewards.bin', 'wb') as s:
+#             pickle.dump(rewards, s)
+#
+#     # # average over episodes
+#     # steps = np.mean(steps, axis=3)
+#     #
+#     # # average over runs
+#     # steps = np.mean(steps, axis=2)
+#
+#     # global figureIndex
+#     # plt.figure(figureIndex)
+#     # figureIndex += 1
+#     # for lamInd, lam in enumerate(lams):
+#     #     plt.plot(alphas, steps[lamInd, :], label='lambda = %s' % (str(lam)))
+#     # plt.xlabel('alpha * # of tilings (8)')
+#     # plt.ylabel('averaged steps per episode')
+#     # plt.ylim([180, 300])
+#     # plt.legend()
 
 
