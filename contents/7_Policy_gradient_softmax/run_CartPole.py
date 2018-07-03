@@ -1,6 +1,5 @@
 """Linear Actor Critic"""
 import gym
-from LineartensorflowAC import *
 from Tile_coding import *
 from LinearActorCritic import *
 import numpy as np
