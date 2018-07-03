@@ -2,15 +2,152 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f5c10b6d-96a6-4885-89c9-bfaf4467b2eb" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Grid_world.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Policy_gradients.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_gridworld.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Ep_reward_AC.bin" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Ep_reward_AC.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Ep_reward_AdvantageActorCritic.bin" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Ep_reward_AdvantageActorCritic.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Ep_reward_reinforce_without_baseline.bin" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Ep_reward_reinforce_without_baseline.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529794749.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529794774.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529794799.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529794878.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529796522.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529796879.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529808724.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529808800.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529810672.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529810772.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529810839.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529810944.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529811613.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529811717.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529812546.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/AA/events.out.tfevents.1529812637.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529816355.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529816995.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529817010.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529817079.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529817524.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529817646.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529817675.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529851777.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529852381.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529852509.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529852536.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529852676.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529852734.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529852800.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529852868.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529852915.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529852927.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529852975.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529853016.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529853204.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529853259.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529853432.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529854057.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529979662.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529979940.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980065.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980096.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980327.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980415.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980441.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980471.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980657.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980661.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980734.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980792.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980818.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980849.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529980964.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529981031.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529981068.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529981381.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529981786.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529981879.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529981894.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529981913.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529982014.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529983319.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529983353.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529983958.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984379.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984436.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984454.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984487.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984526.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984574.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984602.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984630.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984707.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984773.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984797.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529984875.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529985009.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529985165.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529985283.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529985364.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529985712.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529986450.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529987934.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529988985.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529989001.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529990301.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529990390.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529990523.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529990623.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1529990663.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530024732.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530029028.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530029090.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530029153.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530029258.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530029336.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530030475.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530032243.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530032309.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530032516.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530032998.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530033458.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530033679.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530033777.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530033798.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530033863.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530033965.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530034164.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530034443.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530034533.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530042684.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530042714.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530042846.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530042865.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530043250.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530045306.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530059593.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530059878.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530060018.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530060083.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530060121.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530060242.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530060381.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530065903.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530067066.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530068135.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530072684.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530072927.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530073081.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530113712.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530113850.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530113956.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530114095.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530114133.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530114244.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530114286.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530114505.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530114626.zhimin-GS63VR-7RG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/logs/events.out.tfevents.1530116287.zhimin-GS63VR-7RG" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/AC_CartPole.py" beforeDir="false" afterPath="$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/AC_CartPole.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,131 +156,86 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="DockManager">
-    <window id="2">
-      <content type="file-editors">
-        <state>
-          <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-            <file leaf-file-name="LinearActorCritic.py" pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="-627">
-                    <caret line="573" lean-forward="true" selection-start-line="573" selection-end-line="573" />
-                    <folding>
-                      <element signature="e#185#208#0" />
-                      <element signature="e#1324#1361#0" expanded="true" />
-                      <element signature="e#3063#6403#0" />
-                      <element signature="e#6429#10239#0" />
-                      <element signature="e#10274#13049#0" />
-                      <element signature="e#13085#16588#0" />
-                      <element signature="e#16626#19401#0" />
-                      <element signature="e#19444#20628#0" />
-                      <element signature="e#20662#23437#0" />
-                      <element signature="e#23474#26163#0" />
-                    </folding>
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
-  </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5222081">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="Policy_gradients.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Policy_gradients.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1935">
-                  <caret line="316" column="95" selection-start-line="316" selection-start-column="95" selection-end-line="316" selection-end-column="95" />
-                  <folding>
-                    <element signature="e#280#298#0" expanded="true" />
-                    <element signature="e#594#4346#0" />
-                    <element signature="e#4403#6275#0" />
-                    <element signature="e#6333#7809#0" />
-                    <element signature="e#7862#8973#0" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="LinearActorCritic.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="255">
-                  <caret line="75" column="93" selection-start-line="75" selection-start-column="93" selection-end-line="75" selection-end-column="93" />
-                  <folding>
-                    <element signature="e#185#208#0" />
-                    <element signature="e#1324#1361#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Grid_world.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Grid_world.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="570">
-                  <caret line="38" column="29" selection-start-line="38" selection-start-column="29" selection-end-line="38" selection-end-column="29" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="run_gridworld.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_gridworld.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="405">
-                  <caret line="31" selection-start-line="31" selection-end-line="31" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="AC_CartPole.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/AC_CartPole.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="285">
-                  <caret line="22" column="36" selection-start-line="22" selection-start-column="36" selection-end-line="22" selection-end-column="36" />
-                  <folding>
-                    <element signature="e#0#18#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="LineartensorflowAC.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="877">
-                  <caret line="125" column="8" selection-start-line="125" selection-start-column="8" selection-end-line="135" selection-end-column="31" />
-                  <folding>
-                    <element signature="e#185#203#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="run_CartPole.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="3330">
-                  <caret line="227" column="6" selection-start-line="227" selection-start-column="6" selection-end-line="234" selection-end-column="20" />
-                  <folding>
-                    <element signature="e#26#36#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="run_CartPole.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="231">
+              <caret line="21" column="27" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="27" />
+              <folding>
+                <element signature="e#26#36#0" expanded="true" />
+                <element signature="e#1393#1521#0" />
+                <element signature="e#1554#1672#0" />
+                <element signature="e#1676#1699#0" />
+                <element signature="e#2925#3021#0" />
+                <element signature="e#4096#8418#0" />
+                <element signature="e#5180#7613#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Test.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="16" selection-start-line="16" selection-end-line="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="run_MountainCar.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-459">
+              <caret line="21" column="19" lean-forward="true" selection-start-line="21" selection-start-column="19" selection-end-line="21" selection-end-column="19" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Policy_gradients.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Policy_gradients.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1935">
+              <caret line="316" column="95" selection-start-line="316" selection-start-column="95" selection-end-line="316" selection-end-column="95" />
+              <folding>
+                <element signature="e#280#298#0" expanded="true" />
+                <element signature="e#594#4346#0" />
+                <element signature="e#4403#6275#0" />
+                <element signature="e#6333#7809#0" />
+                <element signature="e#7862#8973#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LinearActorCritic.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="396">
+              <caret line="84" selection-start-line="84" selection-end-line="84" />
+              <folding>
+                <element signature="e#185#208#0" />
+                <element signature="e#1324#1361#0" expanded="true" />
+                <element signature="e#3065#6405#0" />
+                <element signature="e#6431#10558#0" />
+                <element signature="e#10593#13368#0" />
+                <element signature="e#13404#16906#0" />
+                <element signature="e#16944#19719#0" />
+                <element signature="e#19757#20941#0" />
+                <element signature="e#20975#23750#0" />
+                <element signature="e#23787#26476#0" />
+                <element signature="e#26487#26508#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -175,29 +267,30 @@
         <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Tile_coding.py" />
         <option value="$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/Allactions_AC.py" />
         <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/RL_brain.py" />
-        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py" />
         <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py" />
         <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py" />
         <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Test.py" />
         <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Policy_gradients.py" />
         <option value="$PROJECT_DIR$/contents/8_Actor_Critic_Advantage/AC_CartPole.py" />
         <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Grid_world.py" />
-        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py" />
         <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_gridworld.py" />
+        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py" />
+        <option value="$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="64" />
-    <option name="y" value="17" />
-    <option name="width" value="1857" />
-    <option name="height" value="1064" />
+    <option name="x" value="1985" />
+    <option name="y" value="-4" />
+    <option name="width" value="1615" />
+    <option name="height" value="1054" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -216,35 +309,15 @@
               <item name="contents" type="462c0819:PsiDirectoryNode" />
               <item name="7_Policy_gradient_softmax" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="RL_project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RL_project" type="462c0819:PsiDirectoryNode" />
-              <item name="contents" type="462c0819:PsiDirectoryNode" />
-              <item name="8_Actor_Critic_Advantage" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RL_project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RL_project" type="462c0819:PsiDirectoryNode" />
-              <item name="contents" type="462c0819:PsiDirectoryNode" />
-              <item name="8_Actor_Critic_Advantage" type="462c0819:PsiDirectoryNode" />
-              <item name="logs" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RL_project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RL_project" type="462c0819:PsiDirectoryNode" />
-              <item name="contents" type="462c0819:PsiDirectoryNode" />
-              <item name="11_Dyna_Q" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="ToolWindowRun.ShowToolbar" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../recongnizers" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../reinforcement-learning-an-introduction-master" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -258,7 +331,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.LinearActorCritic">
+  <component name="RunManager" selected="Python.run_CartPole">
     <configuration name="AC_CartPole" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="RL_project" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -358,10 +431,10 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.run_CartPole" />
         <item itemvalue="Python.LinearActorCritic" />
         <item itemvalue="Python.AC_CartPole" />
         <item itemvalue="Python.Test" />
-        <item itemvalue="Python.run_CartPole" />
         <item itemvalue="Python.LineartensorflowAC" />
       </list>
     </recent_temporary>
@@ -389,18 +462,19 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="-4" width="1855" height="1084" extended-state="6" />
+    <frame x="1985" y="-4" width="1615" height="1054" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2295529" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1468005" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.5083682" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Run" internal_type="SLIDING" order="2" type="SLIDING" weight="0.080543935" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.3294979" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.3294979" />
+      <window_info active="true" anchor="bottom" id="Run" internal_type="SLIDING" order="2" type="SLIDING" visible="true" weight="0.011879049" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.3294979" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39958158" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39958158" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -434,10 +508,16 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py</url>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="7" />
+      <option name="time" value="9" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -448,6 +528,15 @@
           <folding>
             <element signature="e#185#208#0" />
             <element signature="e#1324#1361#0" expanded="true" />
+            <element signature="e#3065#6405#0" />
+            <element signature="e#6431#10558#0" />
+            <element signature="e#10593#13368#0" />
+            <element signature="e#13404#16906#0" />
+            <element signature="e#16944#19719#0" />
+            <element signature="e#19757#20941#0" />
+            <element signature="e#20975#23750#0" />
+            <element signature="e#23787#26476#0" />
+            <element signature="e#26487#26508#0" />
           </folding>
         </state>
       </provider>
@@ -456,9 +545,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1815">
           <caret line="125" column="8" selection-start-line="125" selection-start-column="8" selection-end-line="135" selection-end-column="31" />
-          <folding>
-            <element signature="e#185#203#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -520,6 +606,15 @@
           <folding>
             <element signature="e#185#208#0" />
             <element signature="e#1324#1361#0" expanded="true" />
+            <element signature="e#3065#6405#0" />
+            <element signature="e#6431#10558#0" />
+            <element signature="e#10593#13368#0" />
+            <element signature="e#13404#16906#0" />
+            <element signature="e#16944#19719#0" />
+            <element signature="e#19757#20941#0" />
+            <element signature="e#20975#23750#0" />
+            <element signature="e#23787#26476#0" />
+            <element signature="e#26487#26508#0" />
           </folding>
         </state>
       </provider>
@@ -528,9 +623,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1815">
           <caret line="125" column="8" selection-start-line="125" selection-start-column="8" selection-end-line="135" selection-end-column="31" />
-          <folding>
-            <element signature="e#185#203#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -538,9 +630,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1485">
           <caret line="105" column="59" selection-start-line="105" selection-start-column="59" selection-end-line="105" selection-end-column="59" />
-          <folding>
-            <element signature="e#185#203#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -561,6 +650,15 @@
           <folding>
             <element signature="e#185#208#0" />
             <element signature="e#1324#1361#0" expanded="true" />
+            <element signature="e#3065#6405#0" />
+            <element signature="e#6431#10558#0" />
+            <element signature="e#10593#13368#0" />
+            <element signature="e#13404#16906#0" />
+            <element signature="e#16944#19719#0" />
+            <element signature="e#19757#20941#0" />
+            <element signature="e#20975#23750#0" />
+            <element signature="e#23787#26476#0" />
+            <element signature="e#26487#26508#0" />
           </folding>
         </state>
       </provider>
@@ -579,9 +677,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
-          <folding>
-            <element signature="e#185#203#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -626,6 +721,15 @@
           <folding>
             <element signature="e#185#208#0" />
             <element signature="e#1324#1361#0" expanded="true" />
+            <element signature="e#3065#6405#0" />
+            <element signature="e#6431#10558#0" />
+            <element signature="e#10593#13368#0" />
+            <element signature="e#13404#16906#0" />
+            <element signature="e#16944#19719#0" />
+            <element signature="e#19757#20941#0" />
+            <element signature="e#20975#23750#0" />
+            <element signature="e#23787#26476#0" />
+            <element signature="e#26487#26508#0" />
           </folding>
         </state>
       </provider>
@@ -651,9 +755,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3120">
           <caret line="211" column="51" lean-forward="true" selection-start-line="211" selection-start-column="51" selection-end-line="211" selection-end-column="51" />
-          <folding>
-            <element signature="e#185#203#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -674,6 +775,15 @@
           <folding>
             <element signature="e#185#208#0" />
             <element signature="e#1324#1361#0" expanded="true" />
+            <element signature="e#3065#6405#0" />
+            <element signature="e#6431#10558#0" />
+            <element signature="e#10593#13368#0" />
+            <element signature="e#13404#16906#0" />
+            <element signature="e#16944#19719#0" />
+            <element signature="e#19757#20941#0" />
+            <element signature="e#20975#23750#0" />
+            <element signature="e#23787#26476#0" />
+            <element signature="e#26487#26508#0" />
           </folding>
         </state>
       </provider>
@@ -785,20 +895,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="19" lean-forward="true" selection-start-line="21" selection-start-column="19" selection-end-line="21" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" selection-start-line="16" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Policy_gradients.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1935">
@@ -830,30 +926,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Grid_world.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="38" column="29" selection-start-line="38" selection-start-column="29" selection-end-line="38" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3330">
-          <caret line="227" column="6" selection-start-line="227" selection-start-column="6" selection-end-line="234" selection-end-column="20" />
-          <folding>
-            <element signature="e#26#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LineartensorflowAC.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="877">
+        <state relative-caret-position="67">
           <caret line="125" column="8" selection-start-line="125" selection-start-column="8" selection-end-line="135" selection-end-column="31" />
-          <folding>
-            <element signature="e#185#203#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -864,13 +940,62 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Grid_world.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-579">
+          <caret line="38" column="29" selection-start-line="38" selection-start-column="29" selection-end-line="38" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/Test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_MountainCar.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-459">
+          <caret line="21" column="19" lean-forward="true" selection-start-line="21" selection-start-column="19" selection-end-line="21" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/LinearActorCritic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="75" column="93" selection-start-line="75" selection-start-column="93" selection-end-line="75" selection-end-column="93" />
+        <state relative-caret-position="396">
+          <caret line="84" selection-start-line="84" selection-end-line="84" />
           <folding>
             <element signature="e#185#208#0" />
             <element signature="e#1324#1361#0" expanded="true" />
+            <element signature="e#3065#6405#0" />
+            <element signature="e#6431#10558#0" />
+            <element signature="e#10593#13368#0" />
+            <element signature="e#13404#16906#0" />
+            <element signature="e#16944#19719#0" />
+            <element signature="e#19757#20941#0" />
+            <element signature="e#20975#23750#0" />
+            <element signature="e#23787#26476#0" />
+            <element signature="e#26487#26508#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/contents/7_Policy_gradient_softmax/run_CartPole.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="21" column="27" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="27" />
+          <folding>
+            <element signature="e#26#36#0" expanded="true" />
+            <element signature="e#1393#1521#0" />
+            <element signature="e#1554#1672#0" />
+            <element signature="e#1676#1699#0" />
+            <element signature="e#2925#3021#0" />
+            <element signature="e#4096#8418#0" />
+            <element signature="e#5180#7613#0" />
           </folding>
         </state>
       </provider>
