@@ -53,6 +53,7 @@ for num in range(args['num_seeds']):
     plt.ylabel('Episode_error')
     plt.legend()
     plt.show()
+
 # with open('../data/rmse_change_12.npy', 'rb') as f:
 #     try:
 #         espisode_error_0 = np.load(f)

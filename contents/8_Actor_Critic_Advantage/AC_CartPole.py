@@ -9,8 +9,8 @@ tf.set_random_seed(2)  # reproducible
 # Superparameters
 OUTPUT_GRAPH = True
 MAX_EPISODE = 4000
-DISPLAY_REWARD_THRESHOLD = 2001  # renders environment if total episode reward is greater then this threshold
-MAX_EP_STEPS = 5000   # maximum time step in one episode
+DISPLAY_REWARD_THRESHOLD = 20001  # renders environment if total episode reward is greater then this threshold
+MAX_EP_STEPS = 10000   # maximum time step in one episode
 RENDER = False  # rendering wastes time
 GAMMA = 0.99    # reward discount in TD error
 LR_A = 0.00001    # learning rate for actor
@@ -70,7 +70,6 @@ class Actor(object):
         return exp_v
 
     """all_action"""
-
     def aa_learn(self, s, a, td_error):
         s = s[np.newaxis, :]
         feed_dict = {self.s: s, self.a: a, self.aa_q: td_error}
@@ -136,7 +135,7 @@ critic = Critic(sess, n_features=N_F, lr=LR_C)     # we need a good teacher, so 
 sess.run(tf.global_variables_initializer())
 
 if OUTPUT_GRAPH:
-    summary_writer = tf.summary.FileWriter("logs/adapative_gamma_initial0.9"+str(GAMMA)+"episodes"+str(MAX_EPISODE), sess.graph)
+    summary_writer = tf.summary.FileWriter("logs", sess.graph)
 
 gamma = 0.9
 
@@ -145,14 +144,10 @@ for i_episode in range(MAX_EPISODE):
     t = 0
     track_r = []
     while True:
-        if RENDER: env.render()
 
         a, _ = actor.choose_action(s)
 
         s_, r, done, info = env.step(a)
-
-        if done:
-            r = -20
 
         track_r.append(r)
 
@@ -169,13 +164,12 @@ for i_episode in range(MAX_EPISODE):
                 running_reward = ep_rs_sum
             else:
                 running_reward = running_reward * 0.95 + ep_rs_sum * 0.05
-            if running_reward > DISPLAY_REWARD_THRESHOLD: RENDER = True  # rendering
             print("episode:", i_episode, "  reward:", int(running_reward))
             record = summary_pb2.Summary.Value(tag='reward', simple_value=running_reward)
             record_value = summary_pb2.Summary(value=[record])
             summary_writer.add_summary(record_value, i_episode)
             break
 
-    if i_episode%100 ==0:
+    if i_episode % 100 ==0:
         gamma += (GAMMA - 0.9) / MAX_EPISODE * 100
 
