@@ -99,15 +99,16 @@ def multiple_hyperparameters(args):
     # all_lambda = np.copy(all_rmse)
 
     for option in range(len(all_agent)):
-        for num_state in range(len(all_state)):
-            for num_frequency in range(len(all_frequency)):
+        for num_state, state in enumerate(all_state):
+            for num_frequency, frequency in enumerate(all_frequency):
                 for seed in range(args['num_seeds']):
 
                     """build domain"""
                     domain = Ringworld(
-                        args['num_states'],
+                        state,
                         left_probability=args['left_probability'],
                         random_generator=np.random.RandomState(seed))
+
                     last_s, action, reward, gamma, s = domain.next(args['left_probability'])
                     last_x = domain.state_to_features(last_s)
                     x = domain.state_to_features(s)
@@ -118,7 +119,7 @@ def multiple_hyperparameters(args):
 
                         # compute the frequency for every 1000 steps
                         if step % all_frequency[num_frequency] == 0:
-                            fre_behavior = np.ones((args['num_states'], args['num_actions']))
+                            fre_behavior = np.ones((state, args['num_actions']))
 
                         # compute the probability
                         fre_behavior[last_s, action] += 1
@@ -171,6 +172,7 @@ def multiple_hyperparameters(args):
 
                 with open('{}/rmse_{}.npy'.format(args['directory'], args['test_name']), 'wb') as outfile:
                     np.save(outfile, all_rmse)
+
                 # with open('{}/lambda_{}_{}.npy'.format(args['directory'], args['test_name'], str(option)), 'wb') as outfile:
                 #     np.save(outfile, all_lambda)
 
@@ -184,12 +186,12 @@ def parse_args():
     parser.add_argument('--ISW', type=int, default=0)
     parser.add_argument('--left_probability', type=float, dest='left_probability', default=0.05)
     parser.add_argument('--left_probability2', type=float, dest='left_probability2', default=0.75)
-    parser.add_argument('--num_seeds', type=int, dest='num_seeds', default=20)
+    parser.add_argument('--num_seeds', type=int, dest='num_seeds', default=100)
     parser.add_argument('--num_states', type=int, dest='num_states', default=10)
     parser.add_argument('--num_actions', type=int, dest='num_actions', default=2)
     parser.add_argument('--num_steps', type=int, dest='num_steps', default=50000)
     parser.add_argument('--num_frequency', type=int, dest='num_frequency', default=3000)
-    parser.add_argument('--test_name', default='test')
+    parser.add_argument('--test_name', default='test_different_states')
     args = vars(parser.parse_args())
     if 'num_steps' not in args:
         args['num_steps'] = args['num_states'] * 100
