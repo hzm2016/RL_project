@@ -1,15 +1,14 @@
+# -*- coding: utf-8 -*-
 """
-Actor-Critic using TD-error as the Advantage, Reinforcement Learning.
-The cart pole example. Policy is oscillated.
-View more on my tutorial page: https://morvanzhou.github.io/tutorials/
-Using:
-tensorflow 1.0
-gym 0.8.0
+# @Time    : 03/07/18 4:09 PM
+# @Author  : ZHIMIN HOU
+# @FileName: AC_gridworld.py
+# @Software: PyCharm
+# @Github    ： https://github.com/hzm2016
 """
 
 import numpy as np
 import tensorflow as tf
-import gym
 from gridworld import gameEnv
 slim = tf.contrib.layers
 np.random.seed(2)

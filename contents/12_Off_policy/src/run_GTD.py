@@ -216,4 +216,9 @@ if __name__ == '__main__':
     # rmse_filename = '{}/rmse_change_12.npy'.format(args['directory'])
     # lambda_filename = '{}/lambda_change_12.npy'.format(args['directory'])
     # if not (os.path.exists(rmse_filename) and (os.path.exists(lambda_filename))):
+<<<<<<< HEAD
     main(args)
+=======
+    # main(args)
+    multiple_hyperparameters(args)
+>>>>>>> 0a544d2671ad4605917fbee6d5dfb0670e29bc4d

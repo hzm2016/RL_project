@@ -7,7 +7,7 @@
 #SBATCH --output=slurm-%j-%n-%a.out
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=32000M
-#SBATCH --time=0-12:00
+#SBATCH --time=0-03:00
 
 source activate lambda-greedy
 ./src/run.sh "$@"
