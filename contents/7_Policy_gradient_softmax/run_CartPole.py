@@ -236,7 +236,7 @@ if __name__ == '__main__':
     lams = [0.99, 0.95, 0.5, 0]
     eta = 0.0
     gamma = 0.99
-    agent = 'Reinforce'
+    agent = 'Allactions'
 
     if load:
         with open('steps.bin', 'rb') as f:
@@ -271,9 +271,9 @@ if __name__ == '__main__':
                         rewards[lamInd, alphaInd, run, ep] = running_reward
                         print('lambda %f, alpha %f, run %d, episode %d, steps %d' %
                               (lam, alpha, run, ep, step))
-        with open('steps.bin', 'wb') as f:
+        with open('steps_allactions.bin', 'wb') as f:
             pickle.dump(steps, f)
-        with open('rewards.bin', 'wb') as s:
+        with open('rewards_allactions.bin', 'wb') as s:
             pickle.dump(rewards, s)
 
     # # average over episodes
