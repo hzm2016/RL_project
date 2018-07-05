@@ -233,10 +233,10 @@ if __name__ == '__main__':
     runs = 30
     episodes = 3000
     alphas = np.arange(1, 8) / 1000
-    lams = [0.99, 0.95, 0.5, 0]
+    lams = [0.99, 0.95, 0.5, 0.]
     eta = 0.0
     gamma = 0.99
-    agent = 'Allactions'
+    agent = 'Reinforce'
 
     if load:
         with open('steps.bin', 'rb') as f:
@@ -262,6 +262,7 @@ if __name__ == '__main__':
                         print('Please give the right agent!')
                     for ep in range(episodes):
                         step, reward = play(LinearAC, agent)
+                        print('step', step)
                         steps[lamInd, alphaInd, run, ep] = step
                         if 'running_reward' not in globals():
                             running_reward = reward
@@ -275,21 +276,3 @@ if __name__ == '__main__':
             pickle.dump(steps, f)
         with open('rewards_allactions.bin', 'wb') as s:
             pickle.dump(rewards, s)
-
-    # # average over episodes
-    # steps = np.mean(steps, axis=3)
-    #
-    # # average over runs
-    # steps = np.mean(steps, axis=2)
-
-    # global figureIndex
-    # plt.figure(figureIndex)
-    # figureIndex += 1
-    # for lamInd, lam in enumerate(lams):
-    #     plt.plot(alphas, steps[lamInd, :], label='lambda = %s' % (str(lam)))
-    # plt.xlabel('alpha * # of tilings (8)')
-    # plt.ylabel('averaged steps per episode')
-    # plt.ylim([180, 300])
-    # plt.legend()
-
-
