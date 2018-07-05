@@ -2,7 +2,6 @@
 # -*- coding: ascii -*-
 import argparse
 import numpy as np
-# import matplotlib.pyplot as plt
 import os
 import signal
 import sys
@@ -13,80 +12,96 @@ from algorithms import GTD
 def main(args):
     global siginfo_message
 
-    all_rmse = np.ones((args['num_seeds'], args['num_steps'])) * np.inf
-    all_lambda = np.copy(all_rmse)
-    for option in range(3):
-        for seed in range(args['num_seeds']):
-            """build domain"""
-            domain = Ringworld(
-                args['num_states'],
-                left_probability=args['left_probability'],
-                random_generator=np.random.RandomState(seed))
-            last_s, action, reward, gamma, s = domain.next(args['left_probability'])
-            last_x = domain.state_to_features(last_s)
-            x = domain.state_to_features(s)
+    all_agent = np.array([0, 1, 2, 3])
+    all_rmse = np.ones((len(all_agent), args['num_runs'], args['num_seeds'], args['num_steps'])) * np.inf
+    num_add = args['num_steps']/args['num_change'] - 1
+    for option in range(len(all_agent)):
+        for run in range(args['num_runs']):
+            for seed in range(args['num_seeds']):
+                """build domain"""
+                domain = Ringworld(
+                    args['num_states'],
+                    left_probability=args['left_probability'],
+                    random_generator=np.random.RandomState(seed))
+                last_s, action, reward, gamma, s = domain.next(args['left_probability'])
+                last_x = domain.state_to_features(last_s)
+                x = domain.state_to_features(s)
+                left_probability = args['left_probability']
+                fre_count = np.zeros((args['num_states'], args['num_actions']))
 
-            """build learners"""
-            learner = GTD(last_x)
-            for step in range(args['num_steps']):
+                """build learners"""
+                learner = GTD(last_x)
+                for step in range(args['num_steps']):
 
-                # compute the frequency for every 1000 steps
-                if step % args['num_frequency'] == 0:
-                    fre_behavior = np.ones((args['num_states'], args['num_actions']))
+                    # compute the frequency for every 1000 steps
+                    if step % args['num_frequency'] == 0:
+                        fre_behavior = np.ones((args['num_states'], args['num_actions']))
 
-                # compute the probability
-                fre_behavior[last_s, action] += 1
+                    # update the probability
+                    for i in range(args['num_actions']):
+                        if i == action:
+                            fre_count[last_s, i] += 1
+                        else:
+                            fre_count[last_s, i] *= args['decay']
 
-                # set message for siginfo
-                siginfo_message = '[{0:3.2f}%] SEED: {1} of {2}, EPISODE: {3} of {4}, STEP: {5}'.format(
-                    100 * ((seed + step / args['num_steps']) / args['num_seeds']),
-                    seed + 1, args['num_seeds'], step + 1, args['num_steps'], step)
+                    # update behavior policy
+                    if step > 0 & step % args['num_change'] == 0:
+                        left_probability += (args['left_probability_end'] - args['left_probability'])/num_add
 
-                if option == 0:
-                    # the change is unknown
-                    if action == domain.LEFT:
-                        rho = 0.05 / args['left_probability']
-                    else:
-                        rho = 0.95 / (1 - args['left_probability'])
-                    # the change is known
-                elif option == 1:
-                    if step < args['num_steps']//3:
+                    # set message for siginfo
+                    siginfo_message = '[{0:3.2f}%] SEED: {1} of {2}, EPISODE: {3} of {4}, STEP: {5}'.format(
+                        100 * ((seed + step / args['num_steps']) / args['num_seeds']),
+                        seed + 1, args['num_seeds'], step + 1, args['num_steps'], step)
+
+                    # compute in the same way
+                    if option == 0:
                         if action == domain.LEFT:
                             rho = 0.05 / args['left_probability']
                         else:
                             rho = 0.95 / (1 - args['left_probability'])
+                    # compute with the changed probability
+                    elif option == 1:
+                        if action == domain.LEFT:
+                            rho = 0.05 / left_probability
+                        else:
+                            rho = 0.95 / (1 - left_probability)
+                    # compute with the decay count
+                    elif option == 2:
+                        if action == domain.LEFT:
+                            rho = 0.05 / (fre_count[s, action]/sum(fre_count[s, :]))
+                        else:
+                            rho = 0.95 / (fre_count[s, action]/sum(fre_count[s, :]))
+                    # compute the count with a siding window
                     else:
                         if action == domain.LEFT:
-                            rho = 0.05 / args['left_probability2']
+                            rho = 0.05 / (fre_behavior[s, action]/sum(fre_behavior[s, :]))
+                            # print('0', fre_behavior[s, action]/sum(fre_behavior[s, :]))
                         else:
-                            rho = 0.95 / (1 - args['left_probability2'])
-                else:
-                    if action == domain.LEFT:
-                        rho = 0.05 / (fre_behavior[s, action]/sum(fre_behavior[s, :]))
-                        print('0', fre_behavior[s, action]/sum(fre_behavior[s, :]))
-                    else:
-                        rho = 0.95 / (fre_behavior[s, action]/sum(fre_behavior[s, :]))
-                        print('1', fre_behavior[s, action]/sum(fre_behavior[s, :]))
+                            rho = 0.95 / (fre_behavior[s, action]/sum(fre_behavior[s, :]))
+                            # print('1', fre_behavior[s, action]/sum(fre_behavior[s, :]))
 
-                learner.update(reward, gamma, x, args['alpha'], args['eta'], args['lambda'], rho=rho)
+                    learner.update(reward, gamma, x, args['alpha'], args['eta'], args['lambda'], rho=rho)
 
-                # record rmse and lambda :: compute return target policy
-                all_rmse[seed, step] = domain.rmse(learner, left_probability=args['left_probability'])
-                all_lambda[seed, step] = args['lambda']
+                    # record rmse and lambda :: compute return target policy
+                    all_rmse[option, run, seed, step] = domain.rmse(learner, left_probability=args['left_probability'])
+                    # all_rmse[option, seed, step] = domain.rmse(learner, left_probability=0.05)
 
-                # move to next step
-                if step < args['num_steps']//3:
-                    last_s, action, reward, gamma, s = domain.next(args['left_probability'])
-                else:
-                    last_s, action, reward, gamma, s = domain.next(args['left_probability2'])
+                    # move to next step :: with different behavior policy
+                    last_s, action, reward, gamma, s = domain.next(left_probability)
 
-                last_x = domain.state_to_features(last_s)
-                x = domain.state_to_features(s)
+                    # if step < args['num_steps']//3:
+                    #     last_s, action, reward, gamma, s = domain.next(args['left_probability'])
+                    # else:
+                    #     last_s, action, reward, gamma, s = domain.next(args['left_probability2'])
 
-        with open('{}/rmse_{}_{}.npy'.format(args['directory'], args['test_name'], str(option)), 'wb') as outfile:
-            np.save(outfile, all_rmse)
-        with open('{}/lambda_{}_{}.npy'.format(args['directory'], args['test_name'], str(option)), 'wb') as outfile:
-            np.save(outfile, all_lambda)
+                    last_x = domain.state_to_features(last_s)
+                    x = domain.state_to_features(s)
+
+    with open('{}/rmse_{}.npy'.format(args['directory'], args['test_name']), 'wb') as outfile:
+        np.save(outfile, all_rmse)
+
+    # with open('{}/lambda_{}_{}.npy'.format(args['directory'], args['test_name'], str(option)), 'wb') as outfile:
+    #     np.save(outfile, all_lambda)
 
 
 def multiple_hyperparameters(args):
@@ -183,15 +198,19 @@ def parse_args():
     parser.add_argument('--alpha', type=float, default=0.0005)
     parser.add_argument('--eta', type=float, default=0.05)
     parser.add_argument('--lambda', type=float, default=0.99)
+    parser.add_argument('--decay', type=float, default=0.90)
     parser.add_argument('--ISW', type=int, default=0)
     parser.add_argument('--left_probability', type=float, dest='left_probability', default=0.05)
+    parser.add_argument('--left_probability_end', type=float, dest='left_probability_end', default=0.95)
     parser.add_argument('--left_probability2', type=float, dest='left_probability2', default=0.75)
-    parser.add_argument('--num_seeds', type=int, dest='num_seeds', default=100)
-    parser.add_argument('--num_states', type=int, dest='num_states', default=10)
+    parser.add_argument('--num_seeds', type=int, dest='num_seeds', default=2)
+    parser.add_argument('--num_runs', type=int, dest='num_runs', default=100)
+    parser.add_argument('--num_states', type=int, dest='num_states', default=15)
     parser.add_argument('--num_actions', type=int, dest='num_actions', default=2)
     parser.add_argument('--num_steps', type=int, dest='num_steps', default=50000)
-    parser.add_argument('--num_frequency', type=int, dest='num_frequency', default=3000)
-    parser.add_argument('--test_name', default='test_different_states')
+    parser.add_argument('--num_frequency', type=int, dest='num_frequency', default=1000)
+    parser.add_argument('--num_change', type=int, dest='num_change', default=5000)  # every 5000 steps behavior policy add
+    parser.add_argument('--test_name', default='new_test')
     args = vars(parser.parse_args())
     if 'num_steps' not in args:
         args['num_steps'] = args['num_states'] * 100
@@ -219,5 +238,5 @@ if __name__ == '__main__':
     # lambda_filename = '{}/lambda_change_12.npy'.format(args['directory'])
     # if not (os.path.exists(rmse_filename) and (os.path.exists(lambda_filename))):
 
-    # main(args)
-    multiple_hyperparameters(args)
+    main(args)
+    # multiple_hyperparameters(args)
