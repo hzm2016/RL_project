@@ -232,11 +232,11 @@ if __name__ == '__main__':
 
     runs = 30
     episodes = 3000
-    alphas = np.arange(1, 8) / 1000
-    lams = [0.99, 0.95, 0.5, 0.]
+    alphas = np.arange(1, 8) / 10000
+    lams = [0.99, 0.8, 0.3, 0.]
     eta = 0.0
     gamma = 0.99
-    agent = 'Reinforce'
+    agents = ['Reinforce', 'Allactions', 'AdvantageActorCritic', 'DiscreteActorCritic']
 
     if load:
         with open('steps.bin', 'rb') as f:
@@ -244,35 +244,33 @@ if __name__ == '__main__':
         with open('rewards.bin', 'rb') as s:
             rewards = pickle.load(s)
     else:
-
         steps = np.zeros((len(lams), len(alphas), runs, episodes))
         rewards = np.zeros((len(lams), len(alphas), runs, episodes))
         for lamInd, lam in enumerate(lams):
             for alphaInd, alpha in enumerate(alphas):
                 for run in range(runs):
-                    if agent == 'Reinforce':
-                        LinearAC = Reinforce(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
-                    elif agent == 'Allactions':
-                        LinearAC = Allactions(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
-                    elif agent == 'AdvantageActorCritic':
-                        LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
-                    elif agent == 'DiscreteActorCritic':
-                        LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
-                    else:
-                        print('Please give the right agent!')
-                    for ep in range(episodes):
-                        step, reward = play(LinearAC, agent)
-                        print('step', step)
-                        steps[lamInd, alphaInd, run, ep] = step
-                        if 'running_reward' not in globals():
-                            running_reward = reward
+                    for agentInd, agent in enumerate(agents):
+                        if agent == 'Reinforce':
+                            LinearAC = Reinforce(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
+                        elif agent == 'Allactions':
+                            LinearAC = Allactions(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
+                        elif agent == 'AdvantageActorCritic':
+                            LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
+                        elif agent == 'DiscreteActorCritic':
+                            LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
                         else:
-                            running_reward = running_reward * 0.99 + reward * 0.01
-                        break
-                        rewards[lamInd, alphaInd, run, ep] = running_reward
-                        print('lambda %f, alpha %f, run %d, episode %d, steps %d' %
-                              (lam, alpha, run, ep, step))
-        with open('steps_allactions.bin', 'wb') as f:
+                            print('Please give the right agent!')
+                        for ep in range(episodes):
+                            step, reward = play(LinearAC, agent)
+                            if 'running_reward' not in globals():
+                                running_reward = reward
+                            else:
+                                running_reward = running_reward * 0.99 + reward * 0.01
+                            steps[lamInd, alphaInd, run, ep] = step
+                            rewards[lamInd, alphaInd, run, ep] = running_reward
+                            print('lambda %f, alpha %f, run %d, episode %d, steps %d, rewards%d' %
+                                  (lam, alpha, run, ep, step, running_reward))
+        with open('steps_all_agents.bin', 'wb') as f:
             pickle.dump(steps, f)
-        with open('rewards_allactions.bin', 'wb') as s:
+        with open('rewards_all_agents.bin', 'wb') as s:
             pickle.dump(rewards, s)
