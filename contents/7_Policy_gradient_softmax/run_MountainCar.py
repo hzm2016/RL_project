@@ -1,12 +1,12 @@
 import gym
-from RL_brain import PolicyGradient
-import matplotlib.pyplot as plt
+from RL_brain import *
 from Tile_coding import *
 import tensorflow as tf
 from tensorflow.core.framework import summary_pb2
-from LineartensorflowAC import *
 
-DISPLAY_REWARD_THRESHOLD = -2000  # renders environment if total episode reward is greater then this threshold
+MAX_EPISODE = 3000
+DISPLAY_REWARD_THRESHOLD = 4001  # renders environment if total episode reward is greater then this threshold
+MAX_EP_STEPS = 10000   # maximum time step in one episode
 # episode: 154   reward: -10667
 # episode: 387   reward: -2009
 # episode: 489   reward: -1006
@@ -14,12 +14,17 @@ DISPLAY_REWARD_THRESHOLD = -2000  # renders environment if total episode reward 
 
 RENDER = False  # rendering wastes time
 MAX_EPISODE = 3000
-MAX_EP_STEPS = 5000   # maximum time step in one episode
 OUTPUT_GRAPH = True
+GAMMA = 0.99     # reward discount in TD error
+LR_A = 0.005    # learning rate for actor
+LR_C = 0.01     # learning rate for critic
 
 env = gym.make('MountainCar-v0')
+env._max_episode_steps = 10000
 env.seed(1)     # reproducible, general Policy gradient has high variance
 env = env.unwrapped
+N_F = env.observation_space.shape[0]
+N_A = env.action_space.n
 
 print(env.action_space)
 print(env.observation_space)
@@ -27,8 +32,8 @@ print(env.observation_space.high)
 print(env.observation_space.low)
 
 """"Tile coding"""
-NumOfTilings = 10
-MaxSize = 2048
+NumOfTilings = 50
+MaxSize = 4096
 HashTable = IHT(MaxSize)
 
 """position and velocity needs scaling to satisfy the tile software"""
@@ -50,51 +55,42 @@ def getValueFeature(obv):
 
 sess = tf.Session()
 
-DisAC = DiscreteActorCritic(sess, MaxSize, env.action_space.n, 0.99, 0.0, 0.001, 0.0001, 0.3, 0.3)
-# DisAC = DisAllActions(sess, MaxSize, env.action_space.n, 0.99, 0.0, 0.0001, 0.00001, 0., 0.)
+actor = Actor(sess, n_features=tile.numTiles, n_actions=N_A, lr=LR_A)
+critic = Critic(sess, n_features=tile.numTiles, n_action=N_A, lr=LR_C)
 
 if OUTPUT_GRAPH:
-    summary_writer = tf.summary.FileWriter("logs/", sess.graph)
-
+    summary_writer = tf.summary.FileWriter("nonlinear_results/", sess.graph)
 sess.run(tf.global_variables_initializer())
 
 
-for i_episode in range(MAX_EPISODE):
-    s = env.reset()
-    t = 0
-    track_r = []
-    while True:
+if __name__ == '__main__':
 
-        a = DisAC.choose_action(getValueFeature(s))
+    for i_episode in range(MAX_EPISODE):
+        s = env.reset()
+        t = 0
+        track_r = []
+        while True:
 
-        s_, r, done, info = env.step(a)
+            a, _ = actor.choose_action(s)
 
-        a_ = DisAC.choose_action(getValueFeature(s_))
+            s_, r, done, info = env.step(a)
 
-        # if done:
-        #     r = 10
+            track_r.append(r)
 
-        track_r.append(r)
+            td_error = critic.learn(s, r, s_, GAMMA)  # gradient = grad[r + gamma * V(s_) - V(s)]
+            actor.learn(s, a, td_error)  # true_gradient = grad[logPi(s,a) * td_error]
 
-        delta, e_v = DisAC.update(getValueFeature(s), r, getValueFeature(s_), a)
-        # delta, r_bar, e_q, w_q, e_u, w_u = DisAC.update(getValueFeature(s), r, getValueFeature(s_), a, a_)
-        # print('delta:', delta, 'r_bar:', r_bar, 'e_q:', e_q, 'w_q:', w_q, 'e_u:', e_u, 'w_u', w_u)
-        # print('e_v', e_v)
+            s = s_
+            t += 1
 
-        s = s_
-        t += 1
-
-        if done or t >= MAX_EP_STEPS:
-            ep_rs_sum = sum(track_r)
-
-            if 'running_reward' not in globals():
-                running_reward = ep_rs_sum
-            else:
-                running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
-            # if running_reward > DISPLAY_REWARD_THRESHOLD: RENDER = True  # rendering
-            print("episode:", i_episode, "  reward:", int(running_reward))
-
-            # record = summary_pb2.Summary.Value(tag='reward', simple_value=running_reward)
-            # record_value = summary_pb2.Summary(value=[record])
-            # summary_writer.add_summary(record_value, i_episode)
-            break
+            if done or t >= MAX_EP_STEPS:
+                ep_rs_sum = sum(track_r)
+                if 'running_reward' not in globals():
+                    running_reward = ep_rs_sum
+                else:
+                    running_reward = running_reward * 0.95 + ep_rs_sum * 0.05
+                print("episode:", i_episode, "  reward:", int(running_reward))
+                record = summary_pb2.Summary.Value(tag='reward', simple_value=running_reward)
+                record_value = summary_pb2.Summary(value=[record])
+                summary_writer.add_summary(record_value, i_episode)
+                break

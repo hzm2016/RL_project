@@ -10,7 +10,6 @@ __all__ = ['PolicyGradient', 'Actor', 'Critic', 'ValueFunction']
 
 """"REINFORCE"""
 class PolicyGradient:
-
     def __init__(
             self,
             n_actions,
@@ -283,7 +282,3 @@ class Critic(object):
         td_error, _ = self.sess.run([self.td_error, self.train_op],
                                           {self.s: s, self.v_: v_, self.r: r, self.gamma: gamma})
         return td_error
-
-
-
-

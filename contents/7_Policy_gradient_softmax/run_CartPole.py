@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+"""
+# @Time    : 06/07/18 9:22 AM
+# @Author  : ZHIMIN HOU
+# @FileName: run_LimitCartPole.py
+# @Software: PyCharm
+# @Github    ： https://github.com/hzm2016
+"""
+
 """Linear Actor Critic"""
 import gym
 from Tile_coding import *
@@ -33,8 +42,8 @@ print(env.observation_space.high)
 print(env.observation_space.low)
 
 """"Tile coding"""
-NumOfTilings = 10
-MaxSize = 2048
+NumOfTilings = 50
+MaxSize = 4096
 HashTable = IHT(MaxSize)
 
 """position and velocity needs scaling to satisfy the tile software"""
@@ -230,13 +239,13 @@ def play(LinearAC, agent):
 
 if __name__ == '__main__':
 
-    runs = 30
+    runs = 1
     episodes = 3000
-    alphas = np.arange(1, 8) / 10000
-    lams = [0.99, 0.8, 0.3, 0.]
+    alphas = [1e-6, 1e-5, 1e-4, 1e-3]
+    lams = [0.99, 0.3, 0.]
     eta = 0.0
     gamma = 0.99
-    agents = ['Reinforce', 'Allactions', 'AdvantageActorCritic', 'DiscreteActorCritic']
+    agents = ['Reinforce', 'AdvantageActorCritic', 'DiscreteActorCritic']
 
     if load:
         with open('steps.bin', 'rb') as f:
@@ -258,7 +267,7 @@ if __name__ == '__main__':
                             LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
                         elif agent == 'DiscreteActorCritic':
                             LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, gamma, eta, alpha*10, alpha, lam, lam)
-                        else:
+                        else
                             print('Please give the right agent!')
                         for ep in range(episodes):
                             step, reward = play(LinearAC, agent)
