@@ -7,81 +7,55 @@
 # @Github    ： https://github.com/hzm2016
 """
 
-# -*- coding: ascii -*-
-
-# MIT License
-#
-# Copyright (c) 2018 Dylan Robert Ashley
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
 from typing import List, Tuple, Union
 from Tile_coding import *
 import numpy as np
-import gym
-import pickle
 
 __all__ = ['Reinforce', 'Allactions', 'ContinuousActorCritic', 'DiscreteActorCritic', 'AdvantageActorCritic']
 
-"""Superparameters"""
-OUTPUT_GRAPH = True
-MAX_EPISODE = 3000
-DISPLAY_REWARD_THRESHOLD = 4001  # renders environment if total episode reward is greater then this threshold
-MAX_EP_STEPS = 10000   # maximum time step in one episode
-RENDER = False  # rendering wastes time
-GAMMA = 0.99     # reward discount in TD error
-LR_A = 0.005    # learning rate for actor
-LR_C = 0.01     # learning rate for critic
-EPSILON = 0
-load = False
-
-env = gym.make('MountainCar-v0')
-env._max_episode_steps = 10000
-# env = gym.make('CartPole-v0')
-env.seed(1)     # reproducible, general Policy gradient has high variance
-env = env.unwrapped
-
-N_F = env.observation_space.shape[0]
-N_A = env.action_space.n
-
-print("Environments information:")
-print(env.action_space)
-print(env.observation_space)
-print(env.observation_space.high)
-print(env.observation_space.low)
-
-""""Tile coding"""
-NumOfTilings = 10
-MaxSize = 4096
-HashTable = IHT(MaxSize)
-
-"""position and velocity needs scaling to satisfy the tile software"""
-PositionScale = NumOfTilings / (env.observation_space.high[0] - env.observation_space.low[0])
-VelocityScale = NumOfTilings / (env.observation_space.high[1] - env.observation_space.low[1])
-
-def getQvalueFeature(obv, action):
-    activeTiles = tiles(HashTable, NumOfTilings, [PositionScale * obv[0], VelocityScale * obv[1]], [action])
-    return activeTiles
-
-def getValueFeature(obv):
-    activeTiles = tiles(HashTable, NumOfTilings, [PositionScale * obv[0], VelocityScale * obv[1]])
-    return activeTiles
-
+# """Superparameters"""
+# OUTPUT_GRAPH = True
+# MAX_EPISODE = 3000
+# DISPLAY_REWARD_THRESHOLD = 4001  # renders environment if total episode reward is greater then this threshold
+# MAX_EP_STEPS = 10000   # maximum time step in one episode
+# RENDER = False  # rendering wastes time
+# GAMMA = 0.99     # reward discount in TD error
+# LR_A = 0.005    # learning rate for actor
+# LR_C = 0.01     # learning rate for critic
+# EPSILON = 0
+# load = False
+#
+# env = gym.make('MountainCar-v0')
+# env._max_episode_steps = 10000
+# # env = gym.make('CartPole-v0')
+# env.seed(1)     # reproducible, general Policy gradient has high variance
+# env = env.unwrapped
+#
+# N_F = env.observation_space.shape[0]
+# N_A = env.action_space.n
+#
+# print("Environments information:")
+# print(env.action_space)
+# print(env.observation_space)
+# print(env.observation_space.high)
+# print(env.observation_space.low)
+#
+# """"Tile coding"""
+# NumOfTilings = 10
+# MaxSize = 10000
+# HashTable = IHT(MaxSize)
+#
+# """position and velocity needs scaling to satisfy the tile software"""
+# PositionScale = NumOfTilings / (env.observation_space.high[0] - env.observation_space.low[0])
+# VelocityScale = NumOfTilings / (env.observation_space.high[1] - env.observation_space.low[1])
+#
+# def getQvalueFeature(obv, action):
+#     activeTiles = tiles(HashTable, NumOfTilings, [PositionScale * obv[0], VelocityScale * obv[1]], [action])
+#     return activeTiles
+#
+# def getValueFeature(obv):
+#     activeTiles = tiles(HashTable, NumOfTilings, [PositionScale * obv[0], VelocityScale * obv[1]])
+#     return activeTiles
 
 class Reinforce:
     def __init__(self, n: int,
@@ -255,9 +229,10 @@ class Allactions:
 
         """value update"""
         x = np.asarray(x, dtype=float)
-        prediction = np.dot(self.w_v, x_a)   # this q value
+        prediction = np.dot(self.w_v, x_a)   # current q value
         next_prediction = np.dot(self.w_v, x_a_)   # next q value
-        delta = reward - self.reward_bar + self.gamma * next_prediction - prediction   # sarsa
+        delta = reward - self.reward_bar + self.gamma * next_prediction - prediction  # sarsa
+
         self.w_v += self.alpha_v * delta * self.e_v
         self.reward_bar += self.eta * delta
         self.e_v *= self.lamda_v * self.gamma
@@ -266,37 +241,31 @@ class Allactions:
         """policy update"""
         pi = self.softmax(x)
         action = self.random_generator.choice(self.num_actions, p=pi)
-        q_value = np.dot(self.w_v, np.transpose(np.array(feature)))
+        q_value = np.dot(self.w_v, np.transpose(np.array(feature))) # current all q value
 
-        # print(np.gradient(pi[0], self.w_u))
-        # for i in range(self.num_actions):
-        #     self.w_u += self.alpha_u * np.gradient(pi[i], self.w_u) * q_value[i]
         self.w_u += self.alpha_u * self.e_u
         self.e_u *= self.lamda_u * self.gamma
-
         # self.w_u += self.alpha_u * self.e_u
         # self.e_u *= self.lamda_u * self.gamma
         # for i in range(self.num_actions):
         #     self.e_u[:, i] += q_value[i] * x * pi[i]
         #     for other in range(self.num_actions):
         #         self.e_u[:, other] -= q_value[i] * x * pi[i] * pi[other]
-
         for i in range(self.num_actions):
-            self.w_u[:, i] += q_value[i] * x * pi[i]
+            self.e_u[:, i] += q_value[i] * x * pi[i]
             for other in range(self.num_actions):
-                self.w_u[:, other] -= q_value[i] * x * pi[i] * pi[other]
+                self.e_u[:, other] -= q_value[i] * x * pi[i] * pi[other]
         # for i in range(self.num_actions):
         #     self.w_u[:, i] += self.alpha_u * q_value[i] * x * pi[i]
         #     for other in range(self.num_actions):
         #         self.w_u[:, other] -= self.alpha_u * q_value[i] * x * pi[i] * pi[other]
-                self.w_u[:, other] -= self.alpha_u * q_value[i] * x * pi[i] * pi[other]
-
         # self.w_u += self.alpha_u *
         # self.w_u += self.alpha_u * delta *
         # self.e_u *= self.lamda_u * self.gamma
         # self.e_u[:, action] += x
         # for other in range(self.num_actions):
         #     self.e_u[:, other] -= x * pi[other]
+
         return action, float(delta)
 
 
@@ -474,8 +443,7 @@ class AdvantageActorCritic:
         return action, float(delta)
 
 
-"""Emphatic Actor Critic"""
-class OffDiscreteActorCritic:
+class OffDiscreteActorCritic: #"""Emphatic Actor Critic"""
 
     def __init__(self, n: int, num_actions: int,
                  gamma: float,
@@ -771,213 +739,18 @@ class ContinuousActorCritic:
         self.last_prediction = prediction
         return action, float(delta)
 
-
-agent = 'OffDiscreteActorCritic'
-if agent == 'Reinforce':
-    LinearAC = Reinforce(MaxSize, env.action_space.n, 0.99, 0., 0., 0.0001, 0.3, 0.3)
-elif agent == 'Allactions':
-    LinearAC = Allactions(MaxSize, env.action_space.n, 0.99, 0., 0.001, 0.0001, 0.3, 0.3)
-elif agent == 'AdvantageActorCritic':
-    LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n, 0.99, 0., 0.0001, 0.00001, 0.3, 0.3)
-elif agent == 'DiscreteActorCritic':
-    LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, 0.99, 0., 0.01, 0.001, 0.3, 0.3)
-elif agent == 'OffDiscreteActorCritic':
-    LinearAC = OffDiscreteActorCritic(MaxSize, env.action_space.n, 0.99, 0., 0.001, 0.0001, 0.3, 0.3)
-else:
-    print('Please give the right agent!')
-
-
-espisode_reward = []
-espisode_reward_reinforce = []
-espisode_reward_AC = []
-load = False
-
-if load:
-
-    # with open('Ep_reward_allaction.bin', 'rb') as f:
-    #     try:
-    #         espisode_reward = pickle.load(f)
-    #     except:
-    #         print('There is no file!')
-    with open('Ep_reward_reinforce.bin', 'rb') as f:
-        try:
-            espisode_reward_reinforce = pickle.load(f)
-        except:
-            print('There is no file!')
-    with open('Ep_reward_AC.bin', 'rb') as f:
-        try:
-            espisode_reward_AC = pickle.load(f)
-        except:
-            print('There is no file!')
-    # plt.figure()
-    # espisode_step = np.linspace(0, MAX_EPISODE-1, num=MAX_EPISODE)
-    # plt.plot(espisode_step, espisode_reward_reinforce, espisode_reward_AC, label='Espisode_reward')
-    # plt.xlabel('episodes')
-    # plt.ylabel('reward of each episode')
-    # plt.legend()
-    # plt.show()
-else:
-
-    if agent == 'Allactions':
-        for i_espisode in range(MAX_EPISODE):
-
-            t = 0
-            track_r = []
-            observation = env.reset()
-            action = LinearAC.start(getValueFeature(observation))
-            while True:
-
-                observation_, reward, done, info = env.step(action)
-                action_ = LinearAC.choose_action(getValueFeature(observation_))
-                track_r.append(reward)
-                feature = []
-                for i in range(env.action_space.n):
-                    feature.append(getQvalueFeature(observation, i))
-                action, delta = LinearAC.step(reward, getValueFeature(observation), \
-                                              getQvalueFeature(observation, action), \
-                                              getQvalueFeature(observation_, action_),
-                                              feature)
-                observation = observation_
-                t += 1
-                if done or t > MAX_EP_STEPS:
-
-                    ep_rs_sum = sum(track_r)
-                    if 'running_reward' not in globals():
-                        running_reward = ep_rs_sum
-                    else:
-                        running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
-                    print("episode:", i_espisode,  "reward:", int(running_reward))
-                    espisode_reward.append(int(running_reward))
-                    break
-        with open('Ep_reward_allaction.bin', 'wb') as f:
-            pickle.dump(espisode_reward, f)
-    elif agent == 'AdvantageActorCritic':
-        for i_espisode in range(MAX_EPISODE):
-
-            t = 0
-            track_r = []
-            observation = env.reset()
-            action = LinearAC.start(getValueFeature(observation))
-            while True:
-
-                observation_, reward, done, info = env.step(action)
-
-                feature = []
-                for i in range(env.action_space.n):
-                    feature.append(getQvalueFeature(observation, i))
-
-                # action_ = LinearAC.choose_action(getValueFeature(observation_))
-                # getQvalueFeature(observation_, action_),
-
-                track_r.append(reward)
-
-                action, delta = LinearAC.step(reward, getValueFeature(observation), \
-                                              getQvalueFeature(observation, action), \
-                                              feature)
-                observation = observation_
-                t += 1
-                if done or t > MAX_EP_STEPS:
-
-                    ep_rs_sum = sum(track_r)
-                    if 'running_reward' not in globals():
-                        running_reward = ep_rs_sum
-                    else:
-                        running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
-                    print("episode:", i_espisode,  "reward:", int(running_reward))
-                    espisode_reward.append(int(running_reward))
-                    break
-        with open('Ep_reward_AdvantageActorCritic.bin', 'wb') as f:
-            pickle.dump(espisode_reward, f)
-    elif agent == 'Reinforce':
-        for i_espisode in range(MAX_EPISODE):
-
-            t = 0
-            track_r = []
-            observation = env.reset()
-            action = LinearAC.start(getValueFeature(observation))
-            while True:
-
-                observation_, reward, done, info = env.step(action)
-                track_r.append(reward)
-                LinearAC.store_trasition(getValueFeature(observation), action, reward)
-                action = LinearAC.choose_action(getValueFeature(observation))
-                observation = observation_
-                t += 1
-                if done or t > MAX_EP_STEPS:
-
-                    ep_rs_sum = sum(track_r)
-                    if 'running_reward' not in globals():
-                        running_reward = ep_rs_sum
-                    else:
-                        running_reward = running_reward * 0.9 + ep_rs_sum * 0.1
-                    print("episode:", i_espisode, "reward:", int(running_reward))
-                    espisode_reward.append(int(running_reward))
-                    LinearAC.update()
-                    break
-        with open('Ep_reward_reinforce_without_baseline.bin', 'wb') as f:
-            pickle.dump(espisode_reward, f)
-    elif agent == 'OffDiscreteActorCritic':
-        for i_espisode in range(MAX_EPISODE):
-
-            t = 0
-            track_r = []
-            observation = env.reset()
-            action = LinearAC.start(getValueFeature(observation))
-            while True:
-
-                observation_, reward, done, info = env.step(action)
-                track_r.append(reward)
-                action, delta = LinearAC.step(reward, getValueFeature(observation))
-                observation = observation_
-                t += 1
-                if done or t > MAX_EP_STEPS:
-
-                    ep_rs_sum = sum(track_r)
-                    if 'running_reward' not in globals():
-                        running_reward = ep_rs_sum
-                    else:
-                        running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
-                    print("episode:", i_espisode,  "reward:", int(running_reward))
-                    espisode_reward.append(int(running_reward))
-                    break
-        with open('Ep_reward_AC.bin', 'wb') as f:
-            pickle.dump(espisode_reward, f)
-    else:
-        for i_espisode in range(MAX_EPISODE):
-
-            t = 0
-            track_r = []
-            observation = env.reset()
-            action = LinearAC.start(getValueFeature(observation))
-            while True:
-
-                observation_, reward, done, info = env.step(action)
-                track_r.append(reward)
-                action, delta = LinearAC.step(reward, getValueFeature(observation))
-                observation = observation_
-                t += 1
-                if done or t > MAX_EP_STEPS:
-
-                    ep_rs_sum = sum(track_r)
-                    if 'running_reward' not in globals():
-                        running_reward = ep_rs_sum
-                    else:
-                        running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
-                    print("episode:", i_espisode,  "reward:", int(running_reward))
-                    espisode_reward.append(int(running_reward))
-                    break
-        with open('Ep_reward_AC.bin', 'wb') as f:
-            pickle.dump(espisode_reward, f)
-
-# agent = 'Allactions'
+#
+# agent = 'AdvantageActorCritic'
 # if agent == 'Reinforce':
 #     LinearAC = Reinforce(MaxSize, env.action_space.n, 0.99, 0., 0., 0.0001, 0.3, 0.3)
 # elif agent == 'Allactions':
 #     LinearAC = Allactions(MaxSize, env.action_space.n, 0.99, 0., 0.001, 0.0001, 0.3, 0.3)
 # elif agent == 'AdvantageActorCritic':
-#     LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n, 0.99, 0., 0.01, 0.001, 0.7, 0.7)
+#     LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n, 0.99, 0., 0.001, 0.0001, 0.3, 0.3)
 # elif agent == 'DiscreteActorCritic':
-#     LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, 0.99, 0., 0.001, 0.0001, 0.3, 0.3)
+#     LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, 0.99, 0., 0.01, 0.001, 0.3, 0.3)
+# elif agent == 'OffDiscreteActorCritic':
+#     LinearAC = OffDiscreteActorCritic(MaxSize, env.action_space.n, 0.99, 0., 0.001, 0.0001, 0.3, 0.3)
 # else:
 #     print('Please give the right agent!')
 #
@@ -988,7 +761,6 @@ else:
 # load = False
 #
 # if load:
-#
 #     # with open('Ep_reward_allaction.bin', 'rb') as f:
 #     #     try:
 #     #         espisode_reward = pickle.load(f)
@@ -1004,7 +776,6 @@ else:
 #             espisode_reward_AC = pickle.load(f)
 #         except:
 #             print('There is no file!')
-#
 #     # plt.figure()
 #     # espisode_step = np.linspace(0, MAX_EPISODE-1, num=MAX_EPISODE)
 #     # plt.plot(espisode_step, espisode_reward_reinforce, espisode_reward_AC, label='Espisode_reward')
@@ -1033,7 +804,6 @@ else:
 #                                               getQvalueFeature(observation, action), \
 #                                               getQvalueFeature(observation_, action_),
 #                                               feature)
-#                 # print('------------------delta---------------', delta)
 #                 observation = observation_
 #                 t += 1
 #                 if done or t > MAX_EP_STEPS:
@@ -1058,14 +828,18 @@ else:
 #             while True:
 #
 #                 observation_, reward, done, info = env.step(action)
-#                 action_ = LinearAC.choose_action(getValueFeature(observation_))
-#                 track_r.append(reward)
+#
 #                 feature = []
 #                 for i in range(env.action_space.n):
 #                     feature.append(getQvalueFeature(observation, i))
+#
+#                 # action_ = LinearAC.choose_action(getValueFeature(observation_))
+#                 # getQvalueFeature(observation_, action_),
+#
+#                 track_r.append(reward)
+#
 #                 action, delta = LinearAC.step(reward, getValueFeature(observation), \
 #                                               getQvalueFeature(observation, action), \
-#                                               getQvalueFeature(observation_, action_),
 #                                               feature)
 #                 observation = observation_
 #                 t += 1
@@ -1108,6 +882,32 @@ else:
 #                     LinearAC.update()
 #                     break
 #         with open('Ep_reward_reinforce_without_baseline.bin', 'wb') as f:
+#             pickle.dump(espisode_reward, f)
+#     elif agent == 'OffDiscreteActorCritic':
+#         for i_espisode in range(MAX_EPISODE):
+#
+#             t = 0
+#             track_r = []
+#             observation = env.reset()
+#             action = LinearAC.start(getValueFeature(observation))
+#             while True:
+#
+#                 observation_, reward, done, info = env.step(action)
+#                 track_r.append(reward)
+#                 action, delta = LinearAC.step(reward, getValueFeature(observation))
+#                 observation = observation_
+#                 t += 1
+#                 if done or t > MAX_EP_STEPS:
+#
+#                     ep_rs_sum = sum(track_r)
+#                     if 'running_reward' not in globals():
+#                         running_reward = ep_rs_sum
+#                     else:
+#                         running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
+#                     print("episode:", i_espisode,  "reward:", int(running_reward))
+#                     espisode_reward.append(int(running_reward))
+#                     break
+#         with open('Ep_reward_AC.bin', 'wb') as f:
 #             pickle.dump(espisode_reward, f)
 #     else:
 #         for i_espisode in range(MAX_EPISODE):
