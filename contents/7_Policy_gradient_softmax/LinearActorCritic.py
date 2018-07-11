@@ -158,7 +158,7 @@ class Reinforce:
 
 
 class Allactions:
-
+    """allactions"""
     def __init__(self, n: int,
                  num_actions: int,
                  gamma: float,
@@ -217,7 +217,6 @@ class Allactions:
              reward: float,
              x: Union[List[float], np.ndarray],
              x_a: Union[List[float], np.ndarray],
-             x_a_: Union[List[float], np.ndarray],
              feature: Union[List[float], np.ndarray]) -> Tuple[int, float]:
 
         assert (0 <= self.gamma <= 1)
@@ -227,45 +226,34 @@ class Allactions:
         assert (0 <= self.lamda_v <= 1)
         assert (0 <= self.lamda_u <= 1)
 
-        """value update"""
+        """compute value"""
         x = np.asarray(x, dtype=float)
-        prediction = np.dot(self.w_v, x_a)   # current q value
-        next_prediction = np.dot(self.w_v, x_a_)   # next q value
-        delta = reward - self.reward_bar + self.gamma * next_prediction - prediction  # sarsa
+        pi = self.softmax(x)
+        action = self.random_generator.choice(self.num_actions, p=pi)
+        q_value = np.dot(self.w_v, np.transpose(np.array(feature)))  # current value
 
+        """action value update using sarsa learning"""
+        prediction = np.dot(self.w_v, x_a)  # q_value # last_prediction = np.dot(self.w_v, x_a)
+        delta = reward - self.reward_bar + self.gamma * prediction - self.last_prediction  # sarsa
         self.w_v += self.alpha_v * delta * self.e_v
         self.reward_bar += self.eta * delta
         self.e_v *= self.lamda_v * self.gamma
         self.e_v += x_a
 
         """policy update"""
-        pi = self.softmax(x)
-        action = self.random_generator.choice(self.num_actions, p=pi)
-        q_value = np.dot(self.w_v, np.transpose(np.array(feature))) # current all q value
-
         self.w_u += self.alpha_u * self.e_u
         self.e_u *= self.lamda_u * self.gamma
-        # self.w_u += self.alpha_u * self.e_u
-        # self.e_u *= self.lamda_u * self.gamma
-        # for i in range(self.num_actions):
-        #     self.e_u[:, i] += q_value[i] * x * pi[i]
-        #     for other in range(self.num_actions):
-        #         self.e_u[:, other] -= q_value[i] * x * pi[i] * pi[other]
         for i in range(self.num_actions):
             self.e_u[:, i] += q_value[i] * x * pi[i]
             for other in range(self.num_actions):
                 self.e_u[:, other] -= q_value[i] * x * pi[i] * pi[other]
-        # for i in range(self.num_actions):
-        #     self.w_u[:, i] += self.alpha_u * q_value[i] * x * pi[i]
-        #     for other in range(self.num_actions):
-        #         self.w_u[:, other] -= self.alpha_u * q_value[i] * x * pi[i] * pi[other]
-        # self.w_u += self.alpha_u *
-        # self.w_u += self.alpha_u * delta *
-        # self.e_u *= self.lamda_u * self.gamma
-        # self.e_u[:, action] += x
-        # for other in range(self.num_actions):
-        #     self.e_u[:, other] -= x * pi[other]
 
+        # for i in range(self.num_actions):
+        #     self.w_u[:, i] += self.lamda_u * self.gamma * self.alpha_u * q_value[i] * x * pi[i]
+        #     for other in range(self.num_actions):
+        #         self.e_u[:, other] -= self.lamda_u * self.gamma * self.alpha_u * q_value[i] * x * pi[i] * pi[other]
+
+        self.last_prediction = prediction
         return action, float(delta)
 
 
@@ -443,7 +431,7 @@ class AdvantageActorCritic:
         return action, float(delta)
 
 
-class OffDiscreteActorCritic: #"""Emphatic Actor Critic"""
+class OffDiscreteActorCritic:  # """Emphatic Actor Critic"""
 
     def __init__(self, n: int, num_actions: int,
                  gamma: float,
@@ -738,6 +726,7 @@ class ContinuousActorCritic:
         self.e_sigma += ((action - mu) ** 2 / sigma ** 2 - 1) * x
         self.last_prediction = prediction
         return action, float(delta)
+
 
 #
 # agent = 'AdvantageActorCritic'
