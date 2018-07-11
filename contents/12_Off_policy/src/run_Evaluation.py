@@ -8,7 +8,6 @@
 """
 
 import numpy as np
-
 np.random.seed(1)
 import time
 import gym
