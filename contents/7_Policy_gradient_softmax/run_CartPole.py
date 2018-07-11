@@ -18,11 +18,11 @@ MAX_EPISODE = 3000
 DISPLAY_REWARD_THRESHOLD = 4001
 MAX_EP_STEPS = 10000   # maximum time step in one episode
 runs = 1
-alphas = [1e-6, 1e-5, 1e-4, 1e-3]
-lams = [0.3, 0.]
+alphas = [5e-5, 1e-5]
+lams = [0.0, 0.3]
 eta = 0.0
 gamma = 0.99
-agents = ['AdvantageActorCritic', 'DiscreteActorCritic']
+agents = ['Allactions', 'AdvantageActorCritic']
 
 """Environments Informations"""
 env = gym.make('MountainCar-v0')
@@ -54,109 +54,203 @@ def getValueFeature(obv):
     return activeTiles
 
 
+# def play(LinearAC, agent):
+#     if agent == 'Allactions':
+#         for i_espisode in range(MAX_EPISODE):
+#
+#             t = 0
+#             track_r = []
+#             observation = env.reset()
+#             action = LinearAC.start(getValueFeature(observation))
+#             while True:
+#
+#                 observation_, reward, done, info = env.step(action)
+#                 track_r.append(reward)
+#                 feature = []
+#                 for i in range(env.action_space.n):
+#                     feature.append(getQvalueFeature(observation, i))
+#                 action, delta = LinearAC.step(reward, getValueFeature(observation), \
+#                                               getQvalueFeature(observation, action), \
+#                                               feature)
+#                 observation = observation_
+#                 t += 1
+#                 if done or t > MAX_EP_STEPS:
+#                     return t, int(sum(track_r))
+#     elif agent == 'AdvantageActorCritic':
+#         for i_espisode in range(MAX_EPISODE):
+#
+#             t = 0
+#             track_r = []
+#             observation = env.reset()
+#             action = LinearAC.start(getValueFeature(observation))
+#             while True:
+#
+#                 observation_, reward, done, info = env.step(action)
+#
+#                 feature = []
+#                 for i in range(env.action_space.n):
+#                     feature.append(getQvalueFeature(observation, i))
+#
+#                 # action_ = LinearAC.choose_action(getValueFeature(observation_))
+#                 # getQvalueFeature(observation_, action_),
+#
+#                 track_r.append(reward)
+#
+#                 action, delta = LinearAC.step(reward, getValueFeature(observation), \
+#                                               getQvalueFeature(observation, action), \
+#                                               feature)
+#                 observation = observation_
+#                 t += 1
+#                 if done or t > MAX_EP_STEPS:
+#                     return t, int(sum(track_r))
+#     elif agent == 'Reinforce':
+#         for i_espisode in range(MAX_EPISODE):
+#
+#             t = 0
+#             track_r = []
+#             observation = env.reset()
+#             action = LinearAC.start(getValueFeature(observation))
+#             while True:
+#
+#                 observation_, reward, done, info = env.step(action)
+#                 track_r.append(reward)
+#                 LinearAC.store_trasition(getValueFeature(observation), action, reward)
+#                 action = LinearAC.choose_action(getValueFeature(observation))
+#                 observation = observation_
+#                 t += 1
+#                 if done or t > MAX_EP_STEPS:
+#
+#                     return t, int(sum(track_r))
+#     elif agent == 'OffDiscreteActorCritic':
+#         for i_espisode in range(MAX_EPISODE):
+#
+#             t = 0
+#             track_r = []
+#             observation = env.reset()
+#             action = LinearAC.start(getValueFeature(observation))
+#             while True:
+#
+#                 observation_, reward, done, info = env.step(action)
+#                 track_r.append(reward)
+#                 action, delta = LinearAC.step(reward, getValueFeature(observation))
+#                 observation = observation_
+#                 t += 1
+#                 if done or t > MAX_EP_STEPS:
+#
+#                     return t, int(sum(track_r))
+#     else:
+#         for i_espisode in range(MAX_EPISODE):
+#
+#             t = 0
+#             track_r = []
+#             observation = env.reset()
+#             action = LinearAC.start(getValueFeature(observation))
+#             while True:
+#
+#                 observation_, reward, done, info = env.step(action)
+#                 track_r.append(reward)
+#                 action, delta = LinearAC.step(reward, getValueFeature(observation))
+#                 observation = observation_
+#                 t += 1
+#                 if done or t > MAX_EP_STEPS:
+#
+#                     return t, int(sum(track_r))
 def play(LinearAC, agent):
+
     if agent == 'Allactions':
-        for i_espisode in range(MAX_EPISODE):
 
-            t = 0
-            track_r = []
-            observation = env.reset()
-            action = LinearAC.start(getValueFeature(observation))
-            while True:
+        t = 0
+        track_r = []
+        observation = env.reset()
+        action = LinearAC.start(getValueFeature(observation))
+        while True:
 
-                observation_, reward, done, info = env.step(action)
-                action_ = LinearAC.choose_action(getValueFeature(observation_))
-                track_r.append(reward)
-                feature = []
-                for i in range(env.action_space.n):
-                    feature.append(getQvalueFeature(observation, i))
-                action, delta = LinearAC.step(reward, getValueFeature(observation), \
-                                              getQvalueFeature(observation, action), \
-                                              getQvalueFeature(observation_, action_),
-                                              feature)
-                observation = observation_
-                t += 1
-                if done or t > MAX_EP_STEPS:
-                    return t, int(sum(track_r))
+            observation_, reward, done, info = env.step(action)
+            track_r.append(reward)
+            feature = []
+            for i in range(env.action_space.n):
+                feature.append(getQvalueFeature(observation, i))
+            action, delta = LinearAC.step(reward, getValueFeature(observation), \
+                                          getQvalueFeature(observation, action), \
+                                          feature)
+            observation = observation_
+            t += 1
+            if done or t > MAX_EP_STEPS:
+                return t, int(sum(track_r))
     elif agent == 'AdvantageActorCritic':
-        for i_espisode in range(MAX_EPISODE):
 
-            t = 0
-            track_r = []
-            observation = env.reset()
-            action = LinearAC.start(getValueFeature(observation))
-            while True:
+        t = 0
+        track_r = []
+        observation = env.reset()
+        action = LinearAC.start(getValueFeature(observation))
+        while True:
 
-                observation_, reward, done, info = env.step(action)
+            observation_, reward, done, info = env.step(action)
 
-                feature = []
-                for i in range(env.action_space.n):
-                    feature.append(getQvalueFeature(observation, i))
+            feature = []
+            for i in range(env.action_space.n):
+                feature.append(getQvalueFeature(observation, i))
 
-                # action_ = LinearAC.choose_action(getValueFeature(observation_))
-                # getQvalueFeature(observation_, action_),
+            # action_ = LinearAC.choose_action(getValueFeature(observation_))
+            # getQvalueFeature(observation_, action_),
 
-                track_r.append(reward)
+            track_r.append(reward)
 
-                action, delta = LinearAC.step(reward, getValueFeature(observation), \
-                                              getQvalueFeature(observation, action), \
-                                              feature)
-                observation = observation_
-                t += 1
-                if done or t > MAX_EP_STEPS:
-                    return t, int(sum(track_r))
+            action, delta = LinearAC.step(reward, getValueFeature(observation), \
+                                          getQvalueFeature(observation, action), \
+                                          feature)
+            observation = observation_
+            t += 1
+            if done or t > MAX_EP_STEPS:
+                return t, int(sum(track_r))
     elif agent == 'Reinforce':
-        for i_espisode in range(MAX_EPISODE):
 
-            t = 0
-            track_r = []
-            observation = env.reset()
-            action = LinearAC.start(getValueFeature(observation))
-            while True:
+        t = 0
+        track_r = []
+        observation = env.reset()
+        action = LinearAC.start(getValueFeature(observation))
+        while True:
 
-                observation_, reward, done, info = env.step(action)
-                track_r.append(reward)
-                LinearAC.store_trasition(getValueFeature(observation), action, reward)
-                action = LinearAC.choose_action(getValueFeature(observation))
-                observation = observation_
-                t += 1
-                if done or t > MAX_EP_STEPS:
+            observation_, reward, done, info = env.step(action)
+            track_r.append(reward)
+            LinearAC.store_trasition(getValueFeature(observation), action, reward)
+            action = LinearAC.choose_action(getValueFeature(observation))
+            observation = observation_
+            t += 1
+            if done or t > MAX_EP_STEPS:
 
-                    return t, int(sum(track_r))
+                return t, int(sum(track_r))
     elif agent == 'OffDiscreteActorCritic':
-        for i_espisode in range(MAX_EPISODE):
 
-            t = 0
-            track_r = []
-            observation = env.reset()
-            action = LinearAC.start(getValueFeature(observation))
-            while True:
+        t = 0
+        track_r = []
+        observation = env.reset()
+        action = LinearAC.start(getValueFeature(observation))
+        while True:
 
-                observation_, reward, done, info = env.step(action)
-                track_r.append(reward)
-                action, delta = LinearAC.step(reward, getValueFeature(observation))
-                observation = observation_
-                t += 1
-                if done or t > MAX_EP_STEPS:
+            observation_, reward, done, info = env.step(action)
+            track_r.append(reward)
+            action, delta = LinearAC.step(reward, getValueFeature(observation))
+            observation = observation_
+            t += 1
+            if done or t > MAX_EP_STEPS:
 
-                    return t, int(sum(track_r))
+                return t, int(sum(track_r))
     else:
-        for i_espisode in range(MAX_EPISODE):
+        t = 0
+        track_r = []
+        observation = env.reset()
+        action = LinearAC.start(getValueFeature(observation))
+        while True:
 
-            t = 0
-            track_r = []
-            observation = env.reset()
-            action = LinearAC.start(getValueFeature(observation))
-            while True:
+            observation_, reward, done, info = env.step(action)
+            track_r.append(reward)
+            action, delta = LinearAC.step(reward, getValueFeature(observation))
+            observation = observation_
+            t += 1
+            if done or t > MAX_EP_STEPS:
 
-                observation_, reward, done, info = env.step(action)
-                track_r.append(reward)
-                action, delta = LinearAC.step(reward, getValueFeature(observation))
-                observation = observation_
-                t += 1
-                if done or t > MAX_EP_STEPS:
-
-                    return t, int(sum(track_r))
+                return t, int(sum(track_r))
 
 
 if __name__ == '__main__':
