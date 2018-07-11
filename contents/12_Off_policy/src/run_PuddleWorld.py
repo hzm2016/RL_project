@@ -16,6 +16,7 @@ import gym.spaces
 import pickle
 from algorithms import *
 from Tile_coding import *
+import argparse
 
 
 """Superparameters"""
@@ -23,30 +24,21 @@ OUTPUT_GRAPH = True
 MAX_EPISODE = 5000
 DISPLAY_REWARD_THRESHOLD = 4001
 MAX_EP_STEPS = 5000
-runs = 1
-alphas = [5e-5]
-lams = [0.3]
-eta = 0.0
-gamma = 0.99
-agents = ['Allactions']
 
 """Environments Informations :: Puddle world"""
 env = gym.make('PuddleWorld-v0')
 env.seed(1)
 env = env.unwrapped
 
-env_test = gym.make('PuddleWorld-v0')
-env_test.seed(1)
-
-print("Environments information:")
-print(env.action_space.n)
-print(env.observation_space.shape[0])
-print(env.observation_space.high)
-print(env.observation_space.low)
+# print("Environments information:")
+# print(env.action_space.n)
+# print(env.observation_space.shape[0])
+# print(env.observation_space.high)
+# print(env.observation_space.low)
 
 """Tile coding"""
 NumOfTilings = 10
-MaxSize = 10000
+MaxSize = 100000
 HashTable = IHT(MaxSize)
 
 """position and velocity needs scaling to satisfy the tile software"""
@@ -62,14 +54,44 @@ def getValueFeature(obv):
     return activeTiles
 
 
+"""Parameters"""
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--directory', default='../control_data')
+    parser.add_argument('--alpha', type=float, default=np.array([1e-4, 5e-4, 1e-3, 1e-2, 0.5, 1.]))
+    parser.add_argument('--alpha_h', type=float, default=np.array([0.0001]))
+    parser.add_argument('--eta', type=float, default=0.0)
+    parser.add_argument('--lambda', type=float, default=np.array([0., 0.2, 0.4, 0.6, 0.8, 0.99]))
+    parser.add_argument('--gamma', type=float, default=0.99)
+    parser.add_argument('--decay', type=float, default=0.99)
+    parser.add_argument('--ISW', type=int, default=0)
+    parser.add_argument('--left_probability', type=float, dest='left_probability', default=0.05)
+    parser.add_argument('--left_probability_end', type=float, dest='left_probability_end', default=0.75)
+    parser.add_argument('--num_seeds', type=int, dest='num_seeds', default=100)
+    parser.add_argument('--num_runs', type=int, dest='num_runs', default=10)
+    parser.add_argument('--num_states', type=int, dest='num_states', default=5)
+    parser.add_argument('--num_actions', type=int, dest='num_actions', default=2)
+    parser.add_argument('--num_episodes', type=int, dest='num_episodes', default=4000)
+    parser.add_argument('--num_frequency', type=int, dest='num_frequency', default=1000)
+    parser.add_argument('--num_change', type=int, dest='num_change', default=1000)
+    parser.add_argument('--all_algorithms', type=str, dest='all_algorithms', default=['OffPAC'])
+    parser.add_argument('--behavior_policy', type=float, dest='behavior_policy', default=np.array([0.2, 0.2, 0.2, 0.2, 0.2]))
+    parser.add_argument('--target_policy', type=float, dest='target_policy',
+                        default=np.array([0., 0., 0.5, 0., 0.5]))
+    parser.add_argument('--test_name', default='puddle_control')
+    args = vars(parser.parse_args())
+    if 'num_steps' not in args:
+        args['num_steps'] = args['num_states'] * 100
+    return args
+
 """
 ########################Policy Evaluation#########################
 utilized target policy to generate a trajectory 
 sampled 2000 states from one trajectory
 and run 500 Monte Carlo rollouts to compute an estimate true value
 """
-def evaluat_policy(algorithm, target_policy):
 
+def evaluat_policy(algorithm, target_policy):
     trajectory = np.zeros((10000, env.observation_space.shape[0]))
     state = env.reset()
     for i in range(10000):
@@ -77,7 +99,7 @@ def evaluat_policy(algorithm, target_policy):
         action = np.random.choice(env.action_space.n, p=target_policy)
         state_next, reward, done, info = env.step(action)
         state = state_next
-    print('trajectory generate finished')
+    # print('trajectory generate finished')
 
     sample_index = np.random.choice(10000, 2000)
     sample_state = trajectory[sample_index, :]
@@ -97,65 +119,91 @@ def evaluat_policy(algorithm, target_policy):
                     break
         error = abs(prediction - np.mean(episode_reward))/np.mean(episode_reward)
         sample_reward.append(error)
-    print('sample_generate finished')
+    # print('sample_generate finished')
     return np.mean(sample_reward)
 
 
-"""build learners"""
-behavior_policy = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
-target_policy = np.array([0., 0., 0.5, 0., 0.5])
-espisode_reward = []
-observation = env.reset()
-learner = GTD(getValueFeature(observation))
+def play_evaluation(learner, behavior_policy):
 
-for i_espisode in range(MAX_EPISODE):
     t = 0
-    track_r = []
     observation = env.reset()
+    action = np.random.choice(env.action_space.n, p=behavior_policy)
     while True:
-        action = np.random.choice(env.action_space.n, p=behavior_policy)
+
         observation_, reward, done, info = env.step(action)
-        track_r.append(reward)
-        rho = target_policy[action]/behavior_policy[action]
+        rho = args['target_policy'][action]/args['behavior_policy'][action]
         delta = learner.update(reward, gamma, getValueFeature(observation), alphas[0], eta, lams[0], rho=rho)
+        action = np.random.choice(env.action_space.n, p=behavior_policy)
         observation = observation_
         t += 1
         if done or t > MAX_EP_STEPS:
             break
-    print('num_espisode', i_espisode)
-    if i_espisode > 0 and i_espisode % 50 == 0:
-        error = evaluat_policy(learner, target_policy)
-        print('num_espisode %d, cumulative_reward %f' % (i_espisode, error))
 
 
 """
-########################Control#########################
+################################Control#########################
 utilized target policy to generate a trajectory 
 sampled 2000 states from one trajectory
 and run 500 Monte Carlo rollouts to compute an estimate true value
 """
 
-# def control_performance(off_policy, behavior_policy):
-#
-#     t = 0
-#     track_r = []
-#     observation = env_test.reset()
-#     action_test = off_policy.start(getValueFeature(observation), behavior_policy)
-#     while True:
-#
-#         observation_, reward, done, info = env.step(action_test)
-#         track_r.append(reward)
-#         action_test = off_policy.choose_action(getValueFeature(observation))
-#         observation = observation_
-#         t += 1
-#         if done or t > MAX_EP_STEPS:
-#             return sum(track_r)
+def control_performance(off_policy, behavior_policy):
+
+    average_reward = []
+    for j in range(100):
+        t = 0
+        track_r = []
+        observation = env.reset()
+        action_test = off_policy.start(getValueFeature(observation), behavior_policy)
+        while True:
+
+            observation_, reward, done, info = env.step(action_test)
+            track_r.append(reward)
+            action_test = off_policy.choose_action(getValueFeature(observation))
+            observation = observation_
+            t += 1
+            if done or t > MAX_EP_STEPS:
+                average_reward.append(sum(track_r))
+                break
+    return np.mean(average_reward)
+
+
+def play_control(learner, behavior_policy):
+
+    t = 0
+    observation = env.reset()
+    action = learner.start(getValueFeature(observation), behavior_policy)
+    while True:
+        observation_, reward, done, info = env.step(action)
+        action, delta = learner.step(reward, getValueFeature(observation), behavior_policy)
+        observation = observation_
+        t += 1
+        if done or t > MAX_EP_STEPS:
+            break
+
+
+if __name__ == '__main__':
+    args = parse_args()
+    """Run all the parameters"""
+    rewards = np.zeros((len(args['lambda']), len(args['alpha']), args['num_runs'], int(args['num_episodes']/50)))
+    for lamInd, lam in enumerate(args['lambda']):
+        for alphaInd, alpha in enumerate(args['alpha']):
+            for run in range(args['num_runs']):
+                for agentInd, agent in enumerate(args['all_algorithms']):
+                    learner = OffPAC(MaxSize, env.action_space.n, args['gamma'], args['eta'], alpha*10, alpha, args['alpha_h'], lam, lam)
+                    for ep in range(args['num_episodes']):
+                        play_control(learner, args['behavior_policy'])
+                        if ep > 0 and ep % 50 == 0:
+                            cum_reward = control_performance(learner, args['behavior_policy'])
+                            rewards[lamInd, alphaInd, run, int(ep/50)] = cum_reward
+                            print('lambda %f, alpha %f, run %d, episode %d, rewards%d' % (lam, alpha, run, ep, cum_reward))
+    with open('{}/rmse_{}.npy'.format(args['directory'], args['test_name']), 'wb') as outfile:
+        np.save(outfile, rewards)
+
 
 # off_policy = OffActorCritic(MaxSize, env.action_space.n, \
 #                             gamma, eta, alphas[0]*10, alphas[0], lams[0], lams[0])
-#
 # behavior_policy = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
-#
 # for i_espisode in range(MAX_EPISODE):
 #
 #     t = 0
@@ -177,7 +225,7 @@ and run 500 Monte Carlo rollouts to compute an estimate true value
 #     if i_espisode % 100 == 0:
 #         cum_reward = test(off_policy)
 #         print('num_espisode %d, cumulative_reward %f' % (i_espisode, cum_reward))
-
+#
 # LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n, 0.99, 0., 1e-4, 1e-5, 0.3, 0.3)
 # espisode_reward = []
 # observation = env.reset()
@@ -205,31 +253,3 @@ and run 500 Monte Carlo rollouts to compute an estimate true value
 #             print("episode:", i_espisode,  "reward:", int(running_reward))
 #             espisode_reward.append(int(running_reward))
 #             break
-
-# LinearAC = OffPAC(MaxSize, env.action_space.n, 0.99, 0., 1e-4, 1e-5, 0.2, 0.2)
-# behavior_policy = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
-# espisode_reward = []
-# observation = env.reset()
-# action = LinearAC.start(getValueFeature(observation), behavior_policy)
-#
-# for i_espisode in range(MAX_EPISODE):
-#
-#     t = 0
-#     track_r = []
-#
-#     while True:
-#         observation_, reward, done, info = env.step(action)
-#         track_r.append(reward)
-#         action, delta = LinearAC.step(reward, getValueFeature(observation), behavior_policy)
-#         observation = observation_
-#         t += 1
-#         if done or t > MAX_EP_STEPS:
-#             env.reset()
-#             break
-#
-#     if i_espisode % 100 == 0:
-#         average_reward = []
-#         for j in range(100):
-#             cum_reward = test(LinearAC, behavior_policy)
-#             average_reward.append(cum_reward)
-#         print('num_espisode %d, cumulative_reward %f' % (i_espisode, np.mean(average_reward)))
