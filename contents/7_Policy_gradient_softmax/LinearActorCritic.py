@@ -349,7 +349,8 @@ class AdvantageActorCritic:
                  alpha_v: float,
                  alpha_u: float,
                  lamda_v: float,
-                 lamda_u: float):
+                 lamda_u: float,
+                 expected: True):
 
         assert (n > 0)
         assert (num_actions > 0)
@@ -368,6 +369,7 @@ class AdvantageActorCritic:
         self.alpha_u = alpha_u
         self.lamda_v = lamda_v
         self.lamda_u = lamda_u
+        self.expected = expected
 
     def softmax(self, x: Union[List[float], np.ndarray]) -> np.ndarray:
         x = np.asarray(x, dtype=float)
@@ -416,8 +418,11 @@ class AdvantageActorCritic:
 
         """action value update using sarsa learning"""
         prediction = np.dot(self.w_v, x_a)  # q_value # last_prediction = np.dot(self.w_v, x_a)
-        # delta = reward - self.reward_bar + self.gamma * prediction - self.last_prediction  # sarsa
-        delta = reward - self.reward_bar + self.gamma * np.mean(q_value) - self.last_prediction  # expected sarsa
+        if self.expected:
+            delta = reward - self.reward_bar + self.gamma * np.mean(q_value) - self.last_prediction  # expected sarsa
+        else:
+            delta = reward - self.reward_bar + self.gamma * prediction - self.last_prediction  # sarsa
+
         self.w_v += self.alpha_v * delta * self.e_v
         self.reward_bar += self.eta * delta
         self.e_v *= self.lamda_v * self.gamma

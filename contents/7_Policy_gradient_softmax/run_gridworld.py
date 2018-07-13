@@ -6,7 +6,6 @@
 # @Software: PyCharm
 # @Github    ： https://github.com/hzm2016
 """
-
 import numpy as np
 np.random.seed(1)
 import gym
@@ -27,12 +26,6 @@ MAX_EP_STEPS = 5000
 env = gym.make('PuddleWorld-v0')
 env.seed(1)
 env = env.unwrapped
-
-# print("Environments information:")
-# print(env.action_space.n)
-# print(env.observation_space.shape[0])
-# print(env.observation_space.high)
-# print(env.observation_space.low)
 
 """Tile coding"""
 NumOfTilings = 10
@@ -55,18 +48,18 @@ def getValueFeature(obv):
 """Parameters"""
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--directory', default='../logs')
-    parser.add_argument('--alpha', type=float, default=np.array([5e-5, 5e-4, 1e-3, 1e-2, 0.5, 1.]))
+    parser.add_argument('--directory', default='./logs')
+    parser.add_argument('alpha', type=float, default=np.array([5e-5]))  # np.array([5e-5, 5e-4, 1e-3, 1e-2, 0.5, 1.])
     parser.add_argument('--alpha_h', type=float, default=np.array([0.0001]))
     parser.add_argument('--eta', type=float, default=0.0)
-    parser.add_argument('--lambda', type=float, default=np.array([0., 0.2, 0.4, 0.6, 0.8, 0.99]))
+    parser.add_argument('lambda', type=float, default=np.array([0.]))  # np.array([0., 0.2, 0.4, 0.6, 0.8, 0.99]))
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--decay', type=float, default=0.99)
     parser.add_argument('--ISW', type=int, default=0)
     parser.add_argument('--left_probability', type=float, dest='left_probability', default=0.05)
     parser.add_argument('--left_probability_end', type=float, dest='left_probability_end', default=0.75)
     parser.add_argument('--num_seeds', type=int, dest='num_seeds', default=100)
-    parser.add_argument('--num_runs', type=int, dest='num_runs', default=50)
+    parser.add_argument('--num_runs', type=int, dest='num_runs', default=1)
     parser.add_argument('--num_states', type=int, dest='num_states', default=5)
     parser.add_argument('--num_actions', type=int, dest='num_actions', default=2)
     parser.add_argument('--num_episodes', type=int, dest='num_episodes', default=5000)
@@ -76,7 +69,7 @@ def parse_args():
     parser.add_argument('--behavior_policy', type=float, dest='behavior_policy', default=np.array([0.2, 0.2, 0.2, 0.2, 0.2]))
     parser.add_argument('--target_policy', type=float, dest='target_policy',
                         default=np.array([0., 0., 0.5, 0., 0.5]))
-    parser.add_argument('--test_name', default='puddle_control')
+    parser.add_argument('--test_name', default='puddle_on_policy')
     args = vars(parser.parse_args())
     if 'num_steps' not in args:
         args['num_steps'] = args['num_states'] * 100
@@ -185,38 +178,34 @@ if __name__ == '__main__':
     args = parse_args()
 
     """Run all the parameters"""
-    steps = np.zeros((len(args['all_algorithms']), len(args['lambda']), len(args['alpha']), args['num_runs'], args['num_episodes']))
-    rewards = np.zeros((len(args['all_algorithms']), len(args['lambda']), len(args['alpha']), args['num_runs'], args['num_episodes']))
+    steps = np.zeros((len(args['all_algorithms']), args['num_runs'], args['num_episodes']))
+    rewards = np.zeros((len(args['all_algorithms']), args['num_runs'], args['num_episodes']))
     for agentInd, agent in enumerate(args['all_algorithms']):
-        for lamInd, lam in enumerate(args['lambda']):
-            for alphaInd, alpha in enumerate(args['alpha']):
-                for run in range(args['num_runs']):
-                    if agent == 'Reinforce':
-                        LinearAC = Reinforce(MaxSize, env.action_space.n, args['gamma'], args['eta'], alpha*10, alpha, lam, lam)
-                    elif agent == 'Allactions':
-                        LinearAC = Allactions(MaxSize, env.action_space.n,  args['gamma'], args['eta'], alpha*10, alpha, lam, lam)
-                    elif agent == 'AdvantageActorCritic':
-                        LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], alpha*10, alpha, lam, lam)
-                    elif agent == 'DiscreteActorCritic':
-                        LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], alpha*10, alpha, lam, lam)
-                    else:
-                        print('Please give the right agent!')
-                    print("++++++++++++++++++++++%s++++++++++++++++++++" % agent)
-                    observation = env.reset()
-                    action = LinearAC.start(getValueFeature(observation))
-                    for ep in range(args['num_episodes']):
+        for run in range(args['num_runs']):
+            if agent == 'Reinforce':
+                LinearAC = Reinforce(MaxSize, env.action_space.n, args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
+            elif agent == 'Allactions':
+                LinearAC = Allactions(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
+            elif agent == 'AdvantageActorCritic':
+                LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
+            elif agent == 'DiscreteActorCritic':
+                LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
+            else:
+                print('Please give the right agent!')
+            print("++++++++++++++++++++++%s++++++++++++++++++++" % agent)
+            observation = env.reset()
+            action = LinearAC.start(getValueFeature(observation))
+            for ep in range(args['num_episodes']):
+                step, reward = play(LinearAC, agent)
+                if ep == 0:
+                    running_reward = reward
+                else:
+                    running_reward = running_reward * 0.99 + reward * 0.01
+                steps[agentInd, run, ep] = step
+                rewards[agentInd, run, ep] = running_reward
+                print('agent %s, run %d, episode %d, steps %d, rewards%d' %
+                      (agent, run, ep, step, running_reward))
 
-                        step, reward = play(LinearAC, agent)
-                        if ep == 0:
-                            running_reward = reward
-                        else:
-                            running_reward = running_reward * 0.99 + reward * 0.01
-                        steps[agentInd, lamInd, alphaInd, run, ep] = step
-                        rewards[agentInd, lamInd, alphaInd, run, ep] = running_reward
-                        print('agent %s, lambda %f, alpha %f, run %d, episode %d, steps %d, rewards%d' %
-                              (agent, lam, alpha, run, ep, step, running_reward))
-    with open('{}/step_{}.npy'.format(args['directory'], args['test_name']), 'wb') as outfile:
-        np.save(outfile, steps)
-    with open('{}/reward_{}.npy'.format(args['directory'], args['test_name']), 'wb') as outfile:
+    with open('{}/reward_{}_alpha_{}_lambda_{}.npy'.format(args['directory'], args['test_name'], args['alpha'], args['lambda']), 'wb') as outfile:
         np.save(outfile, rewards)
 

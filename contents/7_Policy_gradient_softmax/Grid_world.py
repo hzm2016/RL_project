@@ -2,7 +2,7 @@
 """
 # @Time    : 29/06/18 12:23 PM
 # @Author  : ZHIMIN HOU
-# @FileName: Grid_world.py
+# @FileName: run_Control.py
 # @Software: PyCharm
 # @Github    ： https://github.com/hzm2016
 """
