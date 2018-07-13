@@ -29,12 +29,6 @@ env = gym.make('PuddleWorld-v0')
 env.seed(1)
 env = env.unwrapped
 
-# print("Environments information:")
-# print(env.action_space.n)
-# print(env.observation_space.shape[0])
-# print(env.observation_space.high)
-# print(env.observation_space.low)
-
 """Tile coding"""
 NumOfTilings = 10
 MaxSize = 100000
@@ -58,11 +52,11 @@ def getValueFeature(obv):
 """Parameters"""
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--directory', default='../control_data')
-    parser.add_argument('--alpha', type=float, default=np.array([1e-4, 5e-4, 1e-3, 1e-2, 0.5, 1.]))
+    parser.add_argument('dir', type=str, default='../control_data')
+    parser.add_argument('alpha', type=float, default=1e-4)  # np.array([1e-4, 5e-4, 1e-3, 1e-2, 0.5, 1.])
+    parser.add_argument('lambda', type=float, default=0.0)  # np.array([0., 0.2, 0.4, 0.6, 0.8, 0.99])
     parser.add_argument('--alpha_h', type=float, default=np.array([0.0001]))
     parser.add_argument('--eta', type=float, default=0.0)
-    parser.add_argument('--lambda', type=float, default=np.array([0., 0.2, 0.4, 0.6, 0.8, 0.99]))
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--decay', type=float, default=0.99)
     parser.add_argument('--ISW', type=int, default=0)
@@ -135,7 +129,7 @@ def play_evaluation(learner, behavior_policy):
 
         observation_, reward, done, info = env.step(action)
         rho = args['target_policy'][action] / args['behavior_policy'][action]
-        # print('rho', rho)
+
         delta = learner.update(reward, getValueFeature(observation), rho=rho)
         action = np.random.choice(env.action_space.n, p=behavior_policy)
         observation = observation_
@@ -147,17 +141,17 @@ def play_evaluation(learner, behavior_policy):
 if __name__ == '__main__':
     args = parse_args()
     """Run all the parameters"""
-    rewards = np.zeros((len(args['lambda']), len(args['alpha']), args['num_runs'], int(args['num_episodes']/50)))
-    for lamInd, lam in enumerate(args['lambda']):
-        for alphaInd, alpha in enumerate(args['alpha']):
-            for run in range(args['num_runs']):
-                for agentInd, agent in enumerate(args['all_algorithms']):
-                    learner = GTD(MaxSize, args['gamma'], args['eta'], alpha, lam)
-                    for ep in range(args['num_episodes']):
-                        play_evaluation(learner, args['behavior_policy'])
-                        if ep > 0 and ep % 50 == 0:
-                            cum_reward = evaluat_policy(learner, args['target_policy'])
-                            rewards[lamInd, alphaInd, run, int(ep/50)] = cum_reward
-                            print('lambda %f, alpha %f, run %d, episode %d, rewards%d' % (lam, alpha, run, ep, cum_reward))
-    with open('{}/rmse_{}.npy'.format(args['directory'], args['test_name']), 'wb') as outfile:
+    rewards = np.zeros((args['num_runs'], int(args['num_episodes']/50)))
+
+    for run in range(args['num_runs']):
+        for agentInd, agent in enumerate(args['all_algorithms']):
+            learner = GTD(MaxSize, args['gamma'], args['eta'], args['alpha'], args['lambda'])
+            for ep in range(args['num_episodes']):
+                play_evaluation(learner, args['behavior_policy'])
+                if ep > 0 and ep % 50 == 0:
+                    cum_reward = evaluat_policy(learner, args['target_policy'])
+                    rewards[run, int(ep / 50)] = cum_reward
+                    print('lambda %f, alpha %f, run %d, episode %d, rewards%d' % (run, ep, cum_reward))
+
+    with open('{}/rmse_{}.npy'.format(args['dir'], args['test_name']), 'wb') as outfile:
         np.save(outfile, rewards)
