@@ -297,6 +297,12 @@ class DiscreteActorCritic:
         x = np.asarray(x, dtype=float)
         return np.dot(self.w_v, x)
 
+    def choose_action(self, x: Union[List[float], np.ndarray]) -> np.ndarray:
+        x = np.asarray(x, dtype=float)
+        pi = self.softmax(x)
+        action = self.random_generator.choice(self.num_actions, p=pi)
+        return action
+
     def start(self, initial_x: Union[List[float], np.ndarray]):
         initial_x = np.asarray(initial_x, dtype=float)
         pi = self.softmax(initial_x)
@@ -410,7 +416,8 @@ class AdvantageActorCritic:
 
         """action value update using sarsa learning"""
         prediction = np.dot(self.w_v, x_a)  # q_value # last_prediction = np.dot(self.w_v, x_a)
-        delta = reward - self.reward_bar + self.gamma * prediction - self.last_prediction  # sarsa
+        # delta = reward - self.reward_bar + self.gamma * prediction - self.last_prediction  # sarsa
+        delta = reward - self.reward_bar + self.gamma * np.mean(q_value) - self.last_prediction  # expected sarsa
         self.w_v += self.alpha_v * delta * self.e_v
         self.reward_bar += self.eta * delta
         self.e_v *= self.lamda_v * self.gamma
