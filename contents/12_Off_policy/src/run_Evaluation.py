@@ -80,13 +80,6 @@ def parse_args():
         args['num_steps'] = args['num_states'] * 100
     return args
 
-"""
-########################Policy Evaluation#########################
-utilized target policy to generate a trajectory 
-sampled 2000 states from one trajectory
-and run 500 Monte Carlo rollouts to compute an estimate true value
-"""
-
 
 def evaluat_policy(learner, target_policy):
     trajectory = np.zeros((10000, env.observation_space.shape[0]))
@@ -138,11 +131,16 @@ def play_evaluation(learner, behavior_policy):
             break
 
 
+"""
+########################OffPolicy Evaluation#########################
+utilized target policy to generate a trajectory 
+sampled 2000 states from one trajectory
+and run 500 Monte Carlo rollouts to compute an estimate true value
+"""
 if __name__ == '__main__':
     args = parse_args()
     """Run all the parameters"""
     rewards = np.zeros((args['num_runs'], int(args['num_episodes']/50)))
-
     for run in range(args['num_runs']):
         for agentInd, agent in enumerate(args['all_algorithms']):
             learner = GTD(MaxSize, args['gamma'], args['eta'], args['alpha'], args['lambda'])

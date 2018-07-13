@@ -83,6 +83,7 @@ class Ringworld:
             prediction = learner.predict(x)
             error = prediction - self.expected_return(
                 state, left_probability=left_probability)
+            error = np.clip(error, -1e5, 1e5)
             # print('error', error)
             mse += (error**2) / self.number_of_states
         return np.sqrt(mse)

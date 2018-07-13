@@ -48,10 +48,10 @@ def main(args):
 
     all_state = np.array([5])
     all_frequency = np.array([1000])
-    all_alpha = np.array([0.005, 0.0005, 1e-5])
-    all_decay = np.array([1.0, 0.95, 0.90])
-    all_numchange = np.array([500, 1000, 5000])
-    all_name = ['unknown', 'normal', 'fade_frequency', 'sliding_window', 'Tree_backup']
+    all_alpha = np.array([0.0005])  # [0.005, 0.0005, 1e-5]
+    all_decay = np.array([1.0, 0.95, 0.90])  # [1.0, 0.95, 0.90]
+    all_numchange = np.array([500])
+    all_name = ['unknown', 'normal', 'fade_frequency', 'sliding_window', 'Retrace_lambda', 'Tree_backup']
     all_rmse = np.ones((len(all_name), len(all_alpha), len(all_decay), len(all_numchange), args['num_seeds'], args['num_steps'])) * np.inf
     for option, agent_name in enumerate(all_name):
         # for stateInd, state in enumerate(all_state):
@@ -128,18 +128,24 @@ def main(args):
                                     elif option == 2:
                                         # print('decay')
                                         if action == domain.LEFT:
-                                            rho = 0.05 / (fre_count[s, action]/sum(fre_count[s, :]))
+                                            rho = 0.05 / min(1, fre_count[s, action]/sum(fre_count[s, :]))
                                         else:
-                                            rho = 0.95 / (fre_count[s, action]/sum(fre_count[s, :]))
+                                            rho = 0.95 / min(1, fre_count[s, action]/sum(fre_count[s, :]))
                                     # compute the count with a siding window
                                     elif option == 3:
                                         # print('count')
                                         if action == domain.LEFT:
-                                            rho = 0.05 / (fre_behavior[s, action]/sum(fre_behavior[s, :]))
+                                            rho = 0.05 / min(1, fre_behavior[s, action]/sum(fre_behavior[s, :]))
                                             # print('0', fre_behavior[s, action]/sum(fre_behavior[s, :]))
                                         else:
-                                            rho = 0.95 / (fre_behavior[s, action]/sum(fre_behavior[s, :]))
+                                            rho = 0.95 / min(1, fre_behavior[s, action]/sum(fre_behavior[s, :]))
                                             # print('1', fre_behavior[s, action]/sum(fre_behavior[s, :]))
+                                    # compute the rho with Trace(lambda)
+                                    elif option == 4:
+                                        if action == domain.LEFT:
+                                            rho = min(1, 0.05/left_probability)
+                                        else:
+                                            rho = min(1, 0.95/(1 - left_probability))
                                     # compute with tree backup
                                     else:
                                         # print('tree_backup')
@@ -267,9 +273,9 @@ def parse_args():
     parser.add_argument('--num_states', type=int, dest='num_states', default=5)
     parser.add_argument('--num_actions', type=int, dest='num_actions', default=2)
     parser.add_argument('--num_steps', type=int, dest='num_steps', default=50000)
-    parser.add_argument('--num_frequency', type=int, dest='num_frequency', default=np.array(1000))
+    parser.add_argument('--num_frequency', type=int, dest='num_frequency', default=1000)
     parser.add_argument('--num_change', type=int, dest='num_change', default=1000)
-    parser.add_argument('--test_name', default='five_agents_tree_backup')
+    parser.add_argument('--test_name', default='Six_agents_trace_different_decay')
     args = vars(parser.parse_args())
     if 'num_steps' not in args:
         args['num_steps'] = args['num_states'] * 100
