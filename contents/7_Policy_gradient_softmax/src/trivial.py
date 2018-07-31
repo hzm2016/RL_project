@@ -12,10 +12,10 @@ class TrivialBasis(object):
         self.ranges = numpy.array(ranges)
 
     def scale(self, value, pos):
-        if self.ranges[pos,0] == self.ranges[pos,1]:
+        if self.ranges[pos, 0] == self.ranges[pos, 1]:
             return 0.0
         else:
-            return (value - self.ranges[pos,0]) / (self.ranges[pos,1] - self.ranges[pos,0])
+            return (value - self.ranges[pos, 0]) / (self.ranges[pos, 1] - self.ranges[pos, 0])
 
     def getNumBasisFunctions(self):
         return self.numTerms
@@ -23,6 +23,4 @@ class TrivialBasis(object):
     def computeFeatures(self, features):
         if len(features) == 0:
             return numpy.ones((1,))
-        return (numpy.array([self.scale(features[i],i) for i in range(len(features))]) - 0.5)*2.
-
-
+        return (numpy.array([self.scale(features[i], i) for i in range(len(features))]) - 0.5) * 2.

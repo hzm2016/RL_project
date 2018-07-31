@@ -8,7 +8,6 @@
 """
 
 import numpy as np
-np.random.seed(1)
 import gym
 import gym_puddle
 import gym.spaces
@@ -37,6 +36,7 @@ HashTable = IHT(MaxSize)
 PositionScale = NumOfTilings / (env.observation_space.high[0] - env.observation_space.low[0])
 VelocityScale = NumOfTilings / (env.observation_space.high[1] - env.observation_space.low[1])
 
+
 def getQvalueFeature(obv, action):
     activeTiles = tiles(HashTable, NumOfTilings, [PositionScale * obv[0], VelocityScale * obv[1]], [action])
     return activeTiles
@@ -59,21 +59,15 @@ def parse_args():
     parser.add_argument('--ISW', type=int, default=0)
     parser.add_argument('--left_probability', type=float, dest='left_probability', default=0.05)
     parser.add_argument('--left_probability_end', type=float, dest='left_probability_end', default=0.75)
-    parser.add_argument('--num_seeds', type=int, dest='num_seeds', default=100)
-    parser.add_argument('--num_runs', type=int, dest='num_runs', default=1)
+    parser.add_argument('--num_runs', type=int, dest='num_runs', default=5)
     parser.add_argument('--num_states', type=int, dest='num_states', default=5)
     parser.add_argument('--num_actions', type=int, dest='num_actions', default=2)
-    parser.add_argument('--num_episodes', type=int, dest='num_episodes', default=5000)
-    parser.add_argument('--num_frequency', type=int, dest='num_frequency', default=1000)
-    parser.add_argument('--num_change', type=int, dest='num_change', default=1000)
+    parser.add_argument('--num_episodes', type=int, dest='num_episodes', default=1000)
     parser.add_argument('--all_algorithms', type=str, dest='all_algorithms', default=['DiscreteActorCritic', 'Allactions', 'AdvantageActorCritic'])
     parser.add_argument('--behavior_policy', type=float, dest='behavior_policy', default=np.array([0.2, 0.2, 0.2, 0.2, 0.2]))
-    parser.add_argument('--target_policy', type=float, dest='target_policy',
-                        default=np.array([0., 0., 0.5, 0., 0.5]))
+    parser.add_argument('--target_policy', type=float, dest='target_policy', default=np.array([0., 0., 0.5, 0., 0.5]))
     parser.add_argument('--test_name', default='MountainCar_on_policy')
     args = vars(parser.parse_args())
-    if 'num_steps' not in args:
-        args['num_steps'] = args['num_states'] * 100
     return args
 
 
@@ -183,12 +177,13 @@ if __name__ == '__main__':
     rewards = np.zeros((len(args['all_algorithms']), args['num_runs'], args['num_episodes']))
     for agentInd, agent in enumerate(args['all_algorithms']):
         for run in range(args['num_runs']):
+            np.random.seed(run)
             if agent == 'Reinforce':
                 LinearAC = Reinforce(MaxSize, env.action_space.n, args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
             elif agent == 'Allactions':
                 LinearAC = Allactions(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
             elif agent == 'AdvantageActorCritic':
-                LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
+                LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'], True)
             elif agent == 'DiscreteActorCritic':
                 LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
             else:
@@ -201,7 +196,7 @@ if __name__ == '__main__':
                 if ep == 0:
                     running_reward = reward
                 else:
-                    running_reward = running_reward * 0.99 + reward * 0.01
+                    running_reward = running_reward * 0.9 + reward * 0.10
                 steps[agentInd, run, ep] = step
                 rewards[agentInd, run, ep] = running_reward
                 print('agent %s, run %d, episode %d, steps %d, rewards%d' %

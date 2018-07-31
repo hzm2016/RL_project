@@ -29,16 +29,18 @@ env = env.unwrapped
 
 """Tile coding"""
 NumOfTilings = 10
-MaxSize = 100000
+MaxSize = 1000000
 HashTable = IHT(MaxSize)
 
 """position and velocity needs scaling to satisfy the tile software"""
 PositionScale = NumOfTilings / (env.observation_space.high[0] - env.observation_space.low[0])
 VelocityScale = NumOfTilings / (env.observation_space.high[1] - env.observation_space.low[1])
 
+
 def getQvalueFeature(obv, action):
     activeTiles = tiles(HashTable, NumOfTilings, [PositionScale * obv[0], VelocityScale * obv[1]], [action])
     return activeTiles
+
 
 def getValueFeature(obv):
     activeTiles = tiles(HashTable, NumOfTilings, [PositionScale * obv[0], VelocityScale * obv[1]])
@@ -48,7 +50,7 @@ def getValueFeature(obv):
 """Parameters"""
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--directory', default='./logs')
+    parser.add_argument('--directory', default='../logs')
     parser.add_argument('alpha', type=float, default=np.array([5e-5]))  # np.array([5e-5, 5e-4, 1e-3, 1e-2, 0.5, 1.])
     parser.add_argument('--alpha_h', type=float, default=np.array([0.0001]))
     parser.add_argument('--eta', type=float, default=0.0)
@@ -65,7 +67,7 @@ def parse_args():
     parser.add_argument('--num_episodes', type=int, dest='num_episodes', default=5000)
     parser.add_argument('--num_frequency', type=int, dest='num_frequency', default=1000)
     parser.add_argument('--num_change', type=int, dest='num_change', default=1000)
-    parser.add_argument('--all_algorithms', type=str, dest='all_algorithms', default=['DiscreteActorCritic', 'Allactions', 'AdvantageActorCritic'])
+    parser.add_argument('--all_algorithms', type=str, dest='all_algorithms', default=['Allactions', 'DiscreteActorCritic', 'AdvantageActorCritic'])
     parser.add_argument('--behavior_policy', type=float, dest='behavior_policy', default=np.array([0.2, 0.2, 0.2, 0.2, 0.2]))
     parser.add_argument('--target_policy', type=float, dest='target_policy',
                         default=np.array([0., 0., 0.5, 0., 0.5]))
@@ -187,7 +189,7 @@ if __name__ == '__main__':
             elif agent == 'Allactions':
                 LinearAC = Allactions(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
             elif agent == 'AdvantageActorCritic':
-                LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
+                LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'], True)
             elif agent == 'DiscreteActorCritic':
                 LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
             else:
@@ -200,12 +202,10 @@ if __name__ == '__main__':
                 if ep == 0:
                     running_reward = reward
                 else:
-                    running_reward = running_reward * 0.99 + reward * 0.01
+                    running_reward = running_reward * 0.90 + reward * 0.10
                 steps[agentInd, run, ep] = step
                 rewards[agentInd, run, ep] = running_reward
                 print('agent %s, run %d, episode %d, steps %d, rewards%d' %
                       (agent, run, ep, step, running_reward))
-
     with open('{}/reward_{}_alpha_{}_lambda_{}.npy'.format(args['directory'], args['test_name'], args['alpha'], args['lambda']), 'wb') as outfile:
         np.save(outfile, rewards)
-

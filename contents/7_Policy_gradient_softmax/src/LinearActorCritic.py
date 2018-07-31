@@ -148,6 +148,7 @@ class Allactions:
         rv = np.zeros(self.num_actions)
         for action in range(0, self.num_actions):
             rv[action] = np.dot(x, (self.w_u[:, action]).flatten())
+        rv = rv - np.max(rv)
         rv = np.exp(rv)
         return rv / sum(rv)
 
@@ -247,6 +248,7 @@ class DiscreteActorCritic:
         rv = np.zeros(self.num_actions)
         for action in range(0, self.num_actions):
             rv[action] = np.dot(x, (self.w_u[:, action]).flatten())
+        rv = rv - np.max(rv)
         rv = np.exp(rv)
         return rv / sum(rv)
 
@@ -333,6 +335,7 @@ class AdvantageActorCritic:
         rv = np.zeros(self.num_actions)
         for action in range(0, self.num_actions):
             rv[action] = np.dot(x, (self.w_u[:, action]).flatten())
+        rv = rv - np.max(rv)
         rv = np.exp(rv)
         return rv / sum(rv)
 
