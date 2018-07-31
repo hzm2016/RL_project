@@ -177,15 +177,18 @@ if __name__ == '__main__':
     rewards = np.zeros((len(args['all_algorithms']), args['num_runs'], args['num_episodes']))
     for agentInd, agent in enumerate(args['all_algorithms']):
         for run in range(args['num_runs']):
-            np.random.seed(run)
             if agent == 'Reinforce':
-                LinearAC = Reinforce(MaxSize, env.action_space.n, args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
+                LinearAC = Reinforce(MaxSize, env.action_space.n, args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'],
+                                     random_generator=np.random.RandomState(run))
             elif agent == 'Allactions':
-                LinearAC = Allactions(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
+                LinearAC = Allactions(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'],
+                                      random_generator=np.random.RandomState(run))
             elif agent == 'AdvantageActorCritic':
-                LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'], True)
+                LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'], True,
+                                                random_generator=np.random.RandomState(run))
             elif agent == 'DiscreteActorCritic':
-                LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'])
+                LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'],
+                                               random_generator=np.random.RandomState(run))
             else:
                 print('Please give the right agent!')
             print("++++++++++++++++++++++%s++++++++++++++++++++" % agent)

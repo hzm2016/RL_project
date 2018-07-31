@@ -11,6 +11,7 @@ from typing import List, Tuple, Union
 from Tile_coding import *
 import numpy as np
 
+
 __all__ = ['Reinforce', 'Allactions', 'ContinuousActorCritic', 'DiscreteActorCritic', 'AdvantageActorCritic']
 
 
@@ -22,12 +23,13 @@ class Reinforce:
                  alpha_v: float,
                  alpha_u: float,
                  lamda_v: float,
-                 lamda_u: float):
+                 lamda_u: float,
+                 random_generator: np.random.RandomState = np.random):
 
         assert (n > 0)
         assert (num_actions > 0)
         self.num_actions = num_actions
-        self.random_generator = np.random
+        self.random_generator = random_generator
         self.reward_bar = 0
         self.e_v = np.zeros(n, dtype=float)
         self.e_u = np.zeros((n, num_actions), dtype=float)
@@ -123,12 +125,13 @@ class Allactions:
                  alpha_v: float,
                  alpha_u: float,
                  lamda_v: float,
-                 lamda_u: float):
+                 lamda_u: float,
+                 random_generator: np.random.RandomState = np.random):
 
         assert (n > 0)
         assert (num_actions > 0)
         self.num_actions = num_actions
-        self.random_generator = np.random
+        self.random_generator = random_generator
         self.reward_bar = 0
         self.e_v = np.zeros(n, dtype=float)
         self.e_u = np.zeros((n, num_actions), dtype=float)
@@ -223,12 +226,13 @@ class DiscreteActorCritic:
                  alpha_v: float,
                  alpha_u: float,
                  lamda_v: float,
-                 lamda_u: float):
+                 lamda_u: float,
+                 random_generator: np.random.RandomState = np.random):
 
         assert (n > 0)
         assert (num_actions > 0)
         self.num_actions = num_actions
-        self.random_generator = np.random
+        self.random_generator = random_generator
         self.reward_bar = 0
         self.e_v = np.zeros(n, dtype=float)
         self.e_u = np.zeros((n, num_actions), dtype=float)
@@ -309,12 +313,13 @@ class AdvantageActorCritic:
                  alpha_u: float,
                  lamda_v: float,
                  lamda_u: float,
-                 expected: True):
+                 expected: True,
+                 random_generator: np.random.RandomState = np.random):
 
         assert (n > 0)
         assert (num_actions > 0)
         self.num_actions = num_actions
-        self.random_generator = np.random
+        self.random_generator = random_generator
         self.reward_bar = 0
         self.e_v = np.zeros(n, dtype=float)
         self.e_u = np.zeros((n, num_actions), dtype=float)
@@ -411,12 +416,13 @@ class OffDiscreteActorCritic:  # """Emphatic Actor Critic"""
                  alpha_v: float,
                  alpha_u: float,
                  lamda_v: float,
-                 lamda_u: float):
+                 lamda_u: float,
+                 random_generator: np.random.RandomState = np.random):
 
         assert (n > 0)
         assert (num_actions > 0)
         self.num_actions = num_actions
-        self.random_generator = np.random
+        self.random_generator = random_generator
         self.reward_bar = 0
         self.e_v = np.zeros(n, dtype=float)
         self.e_u = np.zeros((n, num_actions), dtype=float)

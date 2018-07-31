@@ -16,7 +16,7 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--directory', default='../logs/logs')
-    parser.add_argument('--alpha', type=float, default=0.0005)  # np.array([5e-5, 1e-5, 1e-4, 1e-2, 0.5, 1.])
+    parser.add_argument('--alpha', type=float, default=0.0001)  # np.array([5e-5, 1e-5, 1e-4, 1e-2, 0.5, 1.])
     parser.add_argument('--lambda', type=float, default=0.4)  # np.array([0., 0.2, 0.4])
     parser.add_argument('--all_algorithms', type=str, dest='all_algorithms',
                         default=['DiscreteActorCritic', 'Allactions', 'AdvantageActorCritic'])
@@ -52,13 +52,13 @@ with open('{}/reward_{}_alpha_{}_lambda_{}.npy'.format(args['directory'], args['
 mean_rewards = np.mean(rewards, axis=1)
 std_rewards = np.std(rewards, axis=1)
 figureIndex = 0
-plt.figure(figureIndex)
+plt.figure(figureIndex, figsize=(12, 9))
 figureIndex += 1
 for optionInd, name in enumerate(args['all_algorithms']):
     plt.fill_between(len(mean_rewards[0, :]), mean_rewards[optionInd, :] + std_rewards[optionInd, :], mean_rewards[optionInd, :] - std_rewards[optionInd, :], alpha=0.3)
     plt.plot(np.arange(len(mean_rewards[0, :])), mean_rewards[optionInd, :], label=name, linewidth=2.5)
 plt.title('comparsion between different agnets', fontsize=14)
-plt.xlabel('Episodes', fontsize=12)
-plt.ylabel('Cumulative Rewards', fontsize=12)
-plt.legend()
+plt.xlabel('Episodes', fontsize=14)
+plt.ylabel('Cumulative Rewards', fontsize=14)
+plt.legend(fontsize=14)
 plt.show()
