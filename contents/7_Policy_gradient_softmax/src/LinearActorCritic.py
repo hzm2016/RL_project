@@ -208,12 +208,10 @@ class Allactions:
             self.e_u[:, i] += q_value[i] * x * pi[i]
             for other in range(self.num_actions):
                 self.e_u[:, other] -= q_value[i] * x * pi[i] * pi[other]
-
         # for i in range(self.num_actions):
         #     self.w_u[:, i] += self.lamda_u * self.gamma * self.alpha_u * q_value[i] * x * pi[i]
         #     for other in range(self.num_actions):
         #         self.e_u[:, other] -= self.lamda_u * self.gamma * self.alpha_u * q_value[i] * x * pi[i] * pi[other]
-
         self.last_prediction = prediction
         return action, float(delta)
 
@@ -396,6 +394,7 @@ class AdvantageActorCritic:
         """policy update"""
         state_value = sum(pi * q_value)
         advantage = q_value - state_value * np.ones(len(q_value))
+        """with baseline"""
         self.w_u += self.alpha_u * self.e_u
         self.e_u *= self.lamda_u * self.gamma
         for i in range(self.num_actions):
