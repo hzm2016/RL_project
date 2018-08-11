@@ -17,8 +17,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--directory', default='../logs')
     parser.add_argument('--alpha', type=float, default=1e-5)  # np.array([5e-5, 1e-5, 1e-4, 1e-2, 0.5, 1.])
-    parser.add_argument('--lambda', type=float, default=0.2)  # np.array([0., 0.2, 0.4])
-    parser.add_argument('--figure_name', type=str, default='10')
+    parser.add_argument('--lambda', type=float, default=0.1)  # np.array([0., 0.2, 0.4])
+    parser.add_argument('--figure_name', type=str, default='13')
     parser.add_argument('--all_algorithms', type=str, dest='all_algorithms',
                         default=['DiscreteActorCritic', 'Allactions', 'AdvantageActorCritic'])
     parser.add_argument('--alpha_h', type=float, default=np.array([0.0001]))

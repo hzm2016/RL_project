@@ -195,6 +195,7 @@ class Allactions:
 
         """action value update using sarsa learning"""
         prediction = np.dot(self.w_v, x_a)  # q_value # last_prediction = np.dot(self.w_v, x_a)
+        # delta = reward - self.reward_bar + self.gamma * np.mean(q_value) - self.last_prediction  # expected sarsa
         delta = reward - self.reward_bar + self.gamma * prediction - self.last_prediction  # sarsa
         self.w_v += self.alpha_v * delta * self.e_v
         self.reward_bar += self.eta * delta
@@ -394,14 +395,19 @@ class AdvantageActorCritic:
         """policy update"""
         state_value = sum(pi * q_value)
         advantage = q_value - state_value * np.ones(len(q_value))
+        # advantage = q_value - state_value * np.repeat(len(q_value))
+
         """with baseline"""
         self.w_u += self.alpha_u * self.e_u
         self.e_u *= self.lamda_u * self.gamma
-        for i in range(self.num_actions):
-            self.e_u[:, i] += advantage[i] * pi[i] * x
-            for other in range(self.num_actions):
-                self.e_u[:, other] -= advantage[i] * pi[i] * x * pi[other]
+        self.e_u[:, action] += advantage[action] * x
+        for other in range(self.num_actions):
+            self.e_u[:, other] -= advantage[action] * x * pi[other]
 
+        # for i in range(self.num_actions):
+        #     self.e_u[:, i] += advantage[i] * pi[i] * x
+        #     for other in range(self.num_actions):
+        #         self.e_u[:, other] -= advantage[i] * pi[i] * x * pi[other]
         self.last_action = action
         self.last_prediction = prediction
         return action, float(delta)

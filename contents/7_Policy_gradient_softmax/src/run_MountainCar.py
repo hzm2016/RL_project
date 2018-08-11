@@ -48,10 +48,11 @@ def getValueFeature(obv):
 """Parameters"""
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--directory', default='../logs')
-    parser.add_argument('alpha', type=float, default=np.array([5e-5]))  # np.array([5e-5, 5e-4, 1e-3, 1e-2, 0.5, 1.])
-    parser.add_argument('lambda', type=float, default=np.array([0.]))  # np.array([0., 0.2, 0.4, 0.6, 0.8, 0.99]))
-    parser.add_argument('num_runs', type=int, dest='num_runs', default=5)
+    parser.add_argument('--directory', default='./logs')
+    parser.add_argument('alpha', type=float, default=np.array([1e-3]))  # np.array([5e-5, 5e-4, 1e-3, 1e-2, 0.5, 1.])
+    parser.add_argument('lambda_u', type=float, default=np.array([0.4]))
+    parser.add_argument('--lambda_v', type=float, default=np.array([0.4]))
+    parser.add_argument('num_runs', type=int, dest='num_runs', default=1)
     parser.add_argument('--all_algorithms', type=str, dest='all_algorithms',
                         default=['DiscreteActorCritic', 'Allactions', 'AdvantageActorCritic'])
     parser.add_argument('--alpha_h', type=float, default=np.array([0.0001]))
@@ -60,11 +61,11 @@ def parse_args():
     parser.add_argument('--decay', type=float, default=0.99)
     parser.add_argument('--ISW', type=int, default=0)
     parser.add_argument('--num_states', type=int, dest='num_states', default=5)
-    parser.add_argument('--num_actions', type=int, dest='num_actions', default=2)
+    parser.add_argument('--num_actions', type=int, dest='num_actions', default=1)
     parser.add_argument('--num_episodes', type=int, dest='num_episodes', default=1000)
     parser.add_argument('--behavior_policy', type=float, dest='behavior_policy', default=np.array([0.2, 0.2, 0.2, 0.2, 0.2]))
     parser.add_argument('--target_policy', type=float, dest='target_policy', default=np.array([0., 0., 0.5, 0., 0.5]))
-    parser.add_argument('--test_name', default='MountainCar_on_policy')
+    parser.add_argument('--test_name', default='MountainCar_on_policy_AC')
     args = vars(parser.parse_args())
     return args
 
@@ -84,10 +85,11 @@ def play(LinearAC, agent):
             feature = []
             for i in range(env.action_space.n):
                 feature.append(getQvalueFeature(observation, i))
-            action, delta = LinearAC.step(reward, getValueFeature(observation), \
-                                          getQvalueFeature(observation, action), \
+            action_next, delta = LinearAC.step(reward, getValueFeature(observation), \
+                                          feature(action), \
                                           feature)
             observation = observation_
+            action = action_next
             t += 1
             if done or t > MAX_EP_STEPS:
                 return t, int(sum(track_r))
@@ -105,7 +107,7 @@ def play(LinearAC, agent):
             for i in range(env.action_space.n):
                 feature.append(getQvalueFeature(observation, i))
             action, delta = LinearAC.step(reward, getValueFeature(observation), \
-                                          getQvalueFeature(observation, action), \
+                                          feature(action), \
                                           feature)
             observation = observation_
             t += 1
@@ -168,16 +170,16 @@ if __name__ == '__main__':
         for run in range(args['num_runs']):
             env.seed(run)
             if agent == 'Reinforce':
-                LinearAC = Reinforce(MaxSize, env.action_space.n, args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'],
+                LinearAC = Reinforce(MaxSize, env.action_space.n, args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda_v'], args['lambda_u'],
                                      random_generator=np.random.RandomState(run))
             elif agent == 'Allactions':
-                LinearAC = Allactions(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'],
+                LinearAC = Allactions(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda_v'], args['lambda_u'],
                                       random_generator=np.random.RandomState(run))
             elif agent == 'AdvantageActorCritic':
-                LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'], True,
+                LinearAC = AdvantageActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda_v'], args['lambda_u'], True,
                                                 random_generator=np.random.RandomState(run))
             elif agent == 'DiscreteActorCritic':
-                LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda'], args['lambda'],
+                LinearAC = DiscreteActorCritic(MaxSize, env.action_space.n,  args['gamma'], args['eta'], args['alpha']*10, args['alpha'], args['lambda_v'], args['lambda_u'],
                                                random_generator=np.random.RandomState(run))
             else:
                 print('Please give the right agent!')
