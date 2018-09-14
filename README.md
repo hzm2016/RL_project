@@ -12,9 +12,6 @@
 
 In these tutorials for reinforcement learning, it covers from the basic RL algorithms to advanced algorithms developed recent years.
 
-**If you speak Chinese, visit [莫烦 Python](https://morvanzhou.github.io/tutorials/) or my [Youtube channel](https://www.youtube.com/channel/UCdyjiB5H8Pu7aDTNVXTTpcg) for more.**
-
-**As many requests about making these tutorials available in English, please find them in this playlist:** ([https://www.youtube.com/playlist?list=PLXO45tsB95cIplu-fLMpUEEZTwrDNh6Ba](https://www.youtube.com/playlist?list=PLXO45tsB95cIplu-fLMpUEEZTwrDNh6Ba))
 
 # Table of Contents
 
